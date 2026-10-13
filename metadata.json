@@ -1,0 +1,10 @@
+{
+  "name": "GymX",
+  "description": "GymX - Full-stack fitness & gym management system with Express REST API backend, workout tracker, macro diet logging, Smart Vision scanner, and attendance records.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
