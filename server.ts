@@ -66,7 +66,7 @@ function getAiClient(): GoogleGenAI | null {
 app.get("/api/health", (req, res) => {
   res.json({
     status: "online",
-    service: "Apex Gym Backend REST Engine",
+    service: "GymX Backend REST Engine",
     hasAiKey: Boolean(process.env.GEMINI_API_KEY),
     timestamp: new Date().toISOString(),
     uptimeSeconds: Math.floor(process.uptime()),
@@ -141,7 +141,7 @@ app.post("/api/routines", (req, res) => {
   const newRoutine = {
     id: `routine-custom-${Date.now()}`,
     name: name.trim(),
-    description: description || "Custom lifter split crafted in Apex Pro",
+    description: description || "Custom lifter split crafted in GymX Pro",
     focus: focus || "Hypertrophy & Strength",
     difficulty: (difficulty as any) || "Intermediate",
     durationMin: Number(durationMin) || 55,
@@ -397,7 +397,7 @@ app.post("/api/check-in", (req, res) => {
 
   res.status(201).json({
     success: true,
-    message: `Access granted! Welcome to Apex Gym, ${member.name}.`,
+    message: `Access granted! Welcome to GymX Athletic Club, ${member.name}.`,
     data: newLog,
     member,
   });
@@ -454,11 +454,11 @@ app.post("/api/ai-coach", async (req, res) => {
         answer:
           "To optimize hypertrophy, focus on progressive overload with 8-12 reps per set, keeping 1-2 reps in reserve (RIR). Ensure you consume 1.6-2.2g of protein per kg of bodyweight, and prioritize 7-9 hours of quality sleep for muscular recovery.",
         isSimulated: true,
-        source: "Apex AI Coach Offline Knowledge Base",
+        source: "GymX AI Coach Offline Knowledge Base",
       });
     }
 
-    const prompt = `You are the Head Athletic Coach and Sports Nutritionist at Apex Pro Gym.
+    const prompt = `You are the Head Athletic Coach and Sports Nutritionist at GymX Pro Gym.
 Answer this user question with concise, scientifically backed, highly practical fitness advice:
 Question: "${question}"
 ${userContext ? `Lifter Context: ${JSON.stringify(userContext)}` : ""}
@@ -646,7 +646,7 @@ async function startServer() {
   }
 
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Apex Gym Server listening on http://0.0.0.0:${PORT}`);
+    console.log(`GymX Server listening on http://0.0.0.0:${PORT}`);
   });
 }
 
