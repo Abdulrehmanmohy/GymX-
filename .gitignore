@@ -1,12 +1,38 @@
+# Dependencies
 node_modules/
-build/
+.pnp
+.pnp.js
+
+# Production build outputs
 dist/
+build/
+out/
 coverage/
-.DS_Store
-*.log
-.env*
+
+# Environment variables & secrets
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 !.env.example
 
-# AI Studio platform internal files
+# IDE & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.suo
+*.sw?
+
+# Logs & debugging
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# Local workspace cache
+.cache/
+.temp/
 .aistudio/
 metadata.json
