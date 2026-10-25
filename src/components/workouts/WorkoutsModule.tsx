@@ -21,6 +21,12 @@ import {
   Zap,
   ArrowRight,
   Bookmark,
+  Shield,
+  Layers,
+  Activity,
+  Target,
+  CircleDot,
+  BarChart3,
 } from 'lucide-react';
 import { ExerciseVideoPlayer } from './ExerciseVideoPlayer';
 import { WorkoutVisualizer } from './WorkoutVisualizer';
@@ -30,6 +36,7 @@ import { PlateCalculatorModal } from './PlateCalculatorModal';
 import { ExerciseSwapModal } from './ExerciseSwapModal';
 import { OneRepMaxModal } from './OneRepMaxModal';
 import { WarmUpPyramidModal } from './WarmUpPyramidModal';
+import { AnalyticsPerformanceModule } from '../analytics/AnalyticsPerformanceModule';
 import { sounds } from '../../utils/audio';
 
 interface WorkoutsModuleProps {
@@ -38,6 +45,7 @@ interface WorkoutsModuleProps {
   theme: ThemeMode;
   onSaveRoutine: (newRoutine: WorkoutRoutine) => void;
   onLogCompletedWorkout: (routineName: string, durationMin: number, totalVolume: number) => void;
+  initialSubTab?: 'programs' | 'exercises' | 'solvers' | 'analytics';
 }
 
 export const WorkoutsModule: React.FC<WorkoutsModuleProps> = ({
@@ -46,9 +54,12 @@ export const WorkoutsModule: React.FC<WorkoutsModuleProps> = ({
   theme,
   onSaveRoutine,
   onLogCompletedWorkout,
+  initialSubTab,
 }) => {
   const isDark = theme === 'dark';
-  const [activeSubTab, setActiveSubTab] = useState<'programs' | 'exercises' | 'solvers'>('programs');
+  const [activeSubTab, setActiveSubTab] = useState<'programs' | 'exercises' | 'solvers' | 'analytics'>(
+    initialSubTab || 'programs'
+  );
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [selectedMuscle, setSelectedMuscle] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
@@ -91,12 +102,12 @@ export const WorkoutsModule: React.FC<WorkoutsModuleProps> = ({
   const categories = ['All', 'Heavy Strength', 'HIIT Shred', 'Mobility & Recovery', 'Hypertrophy', 'Bodyweight'];
 
   const muscleAnchors = [
-    { name: 'Chest', icon: 'shield', key: 'Chest' },
-    { name: 'Back', icon: 'align_vertical_bottom', key: 'Back' },
-    { name: 'Legs', icon: 'sprint', key: 'Legs' },
-    { name: 'Shoulders', icon: 'accessibility_new', key: 'Shoulders' },
-    { name: 'Arms', icon: 'fitness_center', key: 'Arms' },
-    { name: 'Core', icon: 'hdr_strong', key: 'Core' },
+    { name: 'Chest', icon: Shield, key: 'Chest' },
+    { name: 'Back', icon: Layers, key: 'Back' },
+    { name: 'Legs', icon: Activity, key: 'Legs' },
+    { name: 'Shoulders', icon: Target, key: 'Shoulders' },
+    { name: 'Arms', icon: Dumbbell, key: 'Arms' },
+    { name: 'Core', icon: CircleDot, key: 'Core' },
   ];
 
   return (
@@ -104,9 +115,7 @@ export const WorkoutsModule: React.FC<WorkoutsModuleProps> = ({
       {/* SECTION: Search Bar HUD & Tags */}
       <section className="flex flex-col gap-2">
         <div className="relative flex items-center">
-          <span className="material-symbols-outlined absolute left-3.5 text-zinc-400 text-lg pointer-events-none">
-            search
-          </span>
+          <Search className="absolute left-3.5 text-zinc-400 w-4 h-4 pointer-events-none" />
           <input
             type="text"
             value={searchQuery}
@@ -157,7 +166,7 @@ export const WorkoutsModule: React.FC<WorkoutsModuleProps> = ({
               : 'text-zinc-400 hover:text-white'
           }`}
         >
-          <span className="material-symbols-outlined text-[16px]">fitness_center</span>
+          <Dumbbell className="w-4 h-4" />
           <span>Workouts ({routines.length})</span>
         </button>
         <button
@@ -171,7 +180,7 @@ export const WorkoutsModule: React.FC<WorkoutsModuleProps> = ({
               : 'text-zinc-400 hover:text-white'
           }`}
         >
-          <span className="material-symbols-outlined text-[16px]">smart_display</span>
+          <Video className="w-4 h-4" />
           <span>Videos ({exerciseLibrary.length})</span>
         </button>
         <button
@@ -179,14 +188,28 @@ export const WorkoutsModule: React.FC<WorkoutsModuleProps> = ({
             sounds.playClick();
             setActiveSubTab('solvers');
           }}
-          className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+          className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1 ${
             activeSubTab === 'solvers'
               ? 'bg-emerald-500 text-black font-black shadow-md shadow-emerald-950/50'
               : 'text-zinc-400 hover:text-white'
           }`}
         >
           <Zap className="w-3.5 h-3.5 fill-current" />
-          <span>Gym Tools</span>
+          <span>Tools</span>
+        </button>
+        <button
+          onClick={() => {
+            sounds.playClick();
+            setActiveSubTab('analytics');
+          }}
+          className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1 ${
+            activeSubTab === 'analytics'
+              ? 'bg-emerald-500 text-black font-black shadow-md shadow-emerald-950/50'
+              : 'text-zinc-400 hover:text-white'
+          }`}
+        >
+          <BarChart3 className="w-3.5 h-3.5" />
+          <span>Analytics</span>
         </button>
       </div>
 
@@ -208,15 +231,11 @@ export const WorkoutsModule: React.FC<WorkoutsModuleProps> = ({
               {/* Top Row: Badge & Coach */}
               <div className="flex justify-between items-start mb-2 relative z-10">
                 <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/20 border border-emerald-500 text-emerald-400 font-label-caps text-[10px] tracking-widest font-bold">
-                  <span className="material-symbols-outlined text-[13px] material-symbols-fill">
-                    local_fire_department
-                  </span>
+                  <Flame className="w-3.5 h-3.5 fill-emerald-400 text-emerald-400" />
                   Trending #1
                 </span>
                 <div className="flex items-center gap-1.5 text-zinc-400 font-label-caps text-[10px]">
-                  <span className="material-symbols-outlined text-sm text-emerald-400 material-symbols-fill">
-                    verified
-                  </span>
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
                   Coach Marcus
                 </div>
               </div>
@@ -296,7 +315,7 @@ export const WorkoutsModule: React.FC<WorkoutsModuleProps> = ({
                     }`}
                   >
                     <div className="w-9 h-9 rounded-lg bg-black flex items-center justify-center text-emerald-400">
-                      <span className="material-symbols-outlined text-[20px]">{anchor.icon}</span>
+                      <anchor.icon className="w-5 h-5" />
                     </div>
                     <span className="font-label-caps text-[10px] uppercase font-bold">{anchor.name}</span>
                   </button>
@@ -325,9 +344,7 @@ export const WorkoutsModule: React.FC<WorkoutsModuleProps> = ({
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <div className="flex flex-col">
                       <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-400 uppercase tracking-wider mb-1 font-mono">
-                        <span className="material-symbols-outlined text-[13px] material-symbols-fill">
-                          local_fire_department
-                        </span>
+                        <Flame className="w-3 h-3 text-emerald-400 fill-emerald-400/20" />
                         {routine.difficulty} • {routine.focus.split(',')[0]}
                       </span>
                       <h3 className="font-display text-base font-bold text-white leading-snug">
@@ -560,6 +577,18 @@ export const WorkoutsModule: React.FC<WorkoutsModuleProps> = ({
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* VIEW 4: ANALYTICS, RECOVERY & PRS */}
+      {activeSubTab === 'analytics' && (
+        <div className="space-y-4 animate-fadeIn">
+          <AnalyticsPerformanceModule
+            theme={theme}
+            onOpenLiveWorkout={() => {
+              if (routines.length > 0) setActiveRoutine(routines[0]);
+            }}
+          />
         </div>
       )}
 

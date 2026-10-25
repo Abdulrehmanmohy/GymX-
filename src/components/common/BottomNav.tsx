@@ -1,6 +1,7 @@
 import React from 'react';
 import { ActiveTab, ThemeMode } from '../../types/gym';
 import { sounds } from '../../utils/audio';
+import { Zap, Dumbbell, BarChart3, Camera, Utensils, UserCheck } from 'lucide-react';
 
 export type TabType = ActiveTab;
 
@@ -28,40 +29,37 @@ export const BottomNav: React.FC<BottomNavProps> = ({
   };
 
   const navItems = [
-    { id: 'planner' as TabType, label: 'Today', icon: 'bolt' },
-    { id: 'workouts' as TabType, label: 'Train', icon: 'fitness_center' },
-    { id: 'analytics' as TabType, label: 'Analytics', icon: 'monitoring' },
-    { id: 'scanner' as TabType, label: 'Scanner', icon: 'photo_camera' },
-    { id: 'diet' as TabType, label: 'Diet', icon: 'restaurant' },
-    { id: 'attendance' as TabType, label: 'Desk', icon: 'how_to_reg' },
+    { id: 'planner' as TabType, label: 'Today', icon: Zap },
+    { id: 'workouts' as TabType, label: 'Train', icon: Dumbbell },
+    { id: 'scanner' as TabType, label: 'Scanner', icon: Camera },
+    { id: 'attendance' as TabType, label: 'Desk', icon: UserCheck },
   ];
 
   return (
     <nav
       id="bottom-navigation-bar"
-      className="fixed bottom-0 left-0 right-0 w-full z-50 flex justify-around items-center px-2 py-2 max-w-md mx-auto bg-black border-t border-zinc-800 shadow-[0_-8px_32px_rgba(0,0,0,0.8)] pb-safe"
+      className="fixed bottom-0 left-0 right-0 w-full z-50 flex justify-around items-center px-2 py-2 max-w-4xl mx-auto bg-black border-t border-zinc-800 shadow-[0_-8px_32px_rgba(0,0,0,0.8)] pb-safe"
     >
       {navItems.map((item) => {
         const isActive = activeTab === item.id;
+        const IconComponent = item.icon;
 
         return (
           <button
             key={item.id}
             id={`nav-btn-${item.id}`}
             onClick={() => handleTabSelect(item.id)}
-            className={`flex flex-col items-center justify-center transition-all duration-150 active:scale-90 cursor-pointer ${
+            className={`flex-1 py-1.5 mx-0.5 flex flex-col items-center justify-center transition-all duration-150 active:scale-90 cursor-pointer ${
               isActive
-                ? 'text-black bg-emerald-500 font-black rounded-xl px-2.5 py-1.5 shadow-[0_0_18px_rgba(16,185,129,0.55)]'
-                : 'text-zinc-400 hover:text-white px-2 py-1'
+                ? 'text-black bg-emerald-500 font-black rounded-xl shadow-[0_0_18px_rgba(16,185,129,0.55)]'
+                : 'text-zinc-400 hover:text-white'
             }`}
           >
-            <span
-              className="material-symbols-outlined text-[20px]"
-              style={{ fontVariationSettings: isActive ? "'FILL' 1" : "'FILL' 0" }}
-            >
-              {item.icon}
-            </span>
-            <span className="font-label-caps text-[9px] mt-0.5 tracking-wider">
+            <IconComponent
+              className={`w-5 h-5 transition-transform ${isActive ? 'scale-110' : ''}`}
+              strokeWidth={isActive ? 2.5 : 2}
+            />
+            <span className="font-label-caps text-[10px] mt-0.5 tracking-wider font-bold">
               {item.label}
             </span>
           </button>

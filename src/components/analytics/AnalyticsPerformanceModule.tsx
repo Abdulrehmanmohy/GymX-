@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ThemeMode } from '../../types/gym';
 import { sounds } from '../../utils/audio';
+import { Activity, Dumbbell, BarChart3, TrendingUp, Heart, Trophy, Watch, Download, Check } from 'lucide-react';
 
 interface AnalyticsPerformanceModuleProps {
   theme: ThemeMode;
@@ -99,7 +100,7 @@ export const AnalyticsPerformanceModule: React.FC<AnalyticsPerformanceModuleProp
       <section className="relative overflow-hidden rounded-2xl bg-zinc-900/90 border border-zinc-800 p-5 shadow-2xl">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-2">
-            <span className="material-symbols-outlined text-emerald-400 text-[20px]">ecg_heart</span>
+            <Activity className="w-5 h-5 text-emerald-400" />
             <h2 className="font-label-caps text-[11px] tracking-widest text-zinc-300 uppercase">
               Biometric Recovery
             </h2>
@@ -186,8 +187,8 @@ export const AnalyticsPerformanceModule: React.FC<AnalyticsPerformanceModuleProp
 
             {/* Recommendation Pill */}
             <div className="bg-zinc-950 border border-emerald-500/40 rounded-xl p-3 flex items-center space-x-2.5 shadow-lg shadow-black">
-              <div className="w-7 h-7 rounded-lg bg-emerald-500 text-white flex items-center justify-center shrink-0">
-                <span className="material-symbols-outlined text-[18px]">fitness_center</span>
+              <div className="w-7 h-7 rounded-lg bg-emerald-500 text-black flex items-center justify-center shrink-0">
+                <Dumbbell className="w-4 h-4" />
               </div>
               <p className="font-display font-bold text-white text-[13px] leading-tight">
                 Prime for Heavy Compound Lifting Today
@@ -202,7 +203,7 @@ export const AnalyticsPerformanceModule: React.FC<AnalyticsPerformanceModuleProp
         <div className="flex items-start justify-between">
           <div>
             <div className="flex items-center space-x-2">
-              <span className="material-symbols-outlined text-emerald-400 text-[20px]">bar_chart</span>
+              <BarChart3 className="w-5 h-5 text-emerald-400" />
               <h2 className="font-label-caps text-[11px] tracking-widest text-zinc-300 uppercase">
                 Weekly Volume Load
               </h2>
@@ -215,8 +216,8 @@ export const AnalyticsPerformanceModule: React.FC<AnalyticsPerformanceModuleProp
             </div>
           </div>
           <div className="text-right">
-            <span className="inline-flex items-center text-[11px] font-label-caps bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 px-2 py-0.5 rounded-full font-bold">
-              <span className="material-symbols-outlined text-[14px] mr-1">trending_up</span>
+            <span className="inline-flex items-center text-[11px] font-label-caps bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 px-2 py-0.5 rounded-full font-bold gap-1">
+              <TrendingUp className="w-3.5 h-3.5" />
               +14.2% VS LW
             </span>
           </div>
@@ -308,9 +309,7 @@ export const AnalyticsPerformanceModule: React.FC<AnalyticsPerformanceModuleProp
               Avg Heart Rate
             </span>
             <div className="flex items-center justify-center space-x-1 mt-1">
-              <span className="material-symbols-outlined text-[16px] text-emerald-400 animate-pulse">
-                favorite
-              </span>
+              <Heart className="w-4 h-4 text-emerald-400 fill-emerald-400 animate-pulse" />
               <span className="font-metric text-lg text-white font-black">142</span>
             </div>
             <span className="text-[10px] text-zinc-400 font-mono">Zone 3 Peak</span>
@@ -329,7 +328,7 @@ export const AnalyticsPerformanceModule: React.FC<AnalyticsPerformanceModuleProp
       <section className="space-y-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <span className="material-symbols-outlined text-emerald-400 text-[20px]">emoji_events</span>
+            <Trophy className="w-5 h-5 text-emerald-400" />
             <h2 className="font-label-caps text-[11px] tracking-widest text-zinc-300 uppercase">
               Personal Records Spotlight
             </h2>
@@ -419,7 +418,7 @@ export const AnalyticsPerformanceModule: React.FC<AnalyticsPerformanceModuleProp
       <section className="rounded-2xl bg-zinc-900/90 border border-zinc-800 p-5 shadow-2xl space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <span className="material-symbols-outlined text-emerald-400 text-[20px]">fitness_center</span>
+            <Dumbbell className="w-5 h-5 text-emerald-400" />
             <h2 className="font-label-caps text-[11px] tracking-widest text-zinc-300 uppercase">
               Muscle Fatigue Matrix
             </h2>
@@ -583,7 +582,7 @@ export const AnalyticsPerformanceModule: React.FC<AnalyticsPerformanceModuleProp
       <section className="rounded-2xl bg-black border border-zinc-800 p-4 space-y-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <span className="material-symbols-outlined text-emerald-400 text-[18px]">devices_wearables</span>
+            <Watch className="w-4 h-4 text-emerald-400" />
             <span className="font-label-caps text-[11px] text-zinc-300 uppercase tracking-wider">
               Connected Sensors
             </span>
@@ -612,7 +611,7 @@ export const AnalyticsPerformanceModule: React.FC<AnalyticsPerformanceModuleProp
           onClick={handleExport}
           className="w-full mt-2 py-3.5 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 active:scale-95 transition-all duration-150 text-white font-display font-extrabold tracking-wider uppercase text-[14px] flex items-center justify-center space-x-2 shadow-lg shadow-emerald-950/50 cursor-pointer"
         >
-          <span className="material-symbols-outlined text-[20px]">file_download</span>
+          <Download className="w-5 h-5 text-black" />
           <span>{downloadSuccess ? 'Telemetry Report Exported (PDF / CSV) ✓' : 'Export Telemetry Report (PDF / CSV)'}</span>
         </button>
       </section>

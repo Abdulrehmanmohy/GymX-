@@ -1,0 +1,37 @@
+{
+  "packageId": "com.gymx.app",
+  "host": "ais-pre-gqmdzzdwqqnrtbvnfo3nvy-718851497432.asia-east1.run.app",
+  "name": "GymX - Fitness & Training",
+  "launcherName": "GymX",
+  "display": "standalone",
+  "themeColor": "#10B981",
+  "themeColorDark": "#0A0A0C",
+  "navigationColor": "#000000",
+  "navigationColorDark": "#000000",
+  "navigationDividerColor": "#000000",
+  "backgroundColor": "#0A0A0C",
+  "enableNotifications": true,
+  "startUrl": "/",
+  "iconUrl": "https://ais-pre-gqmdzzdwqqnrtbvnfo3nvy-718851497432.asia-east1.run.app/icons/icon-512.png",
+  "maskableIconUrl": "https://ais-pre-gqmdzzdwqqnrtbvnfo3nvy-718851497432.asia-east1.run.app/icons/icon-maskable-512.png",
+  "appVersionName": "1.0.0",
+  "appVersionCode": 1,
+  "shortcuts": [],
+  "generatorApp": "bubblewrap-cli",
+  "webManifestUrl": "https://ais-pre-gqmdzzdwqqnrtbvnfo3nvy-718851497432.asia-east1.run.app/manifest.json",
+  "fallbackType": "customtabs",
+  "features": {
+    "locationDelegation": {
+      "enabled": true
+    },
+    "playBilling": {
+      "enabled": false
+    }
+  },
+  "alphaDependencies": {
+    "enabled": false
+  },
+  "enableSiteSettingsShortcut": true,
+  "isChromeOSOnly": false,
+  "isMetaQuest": false
+}

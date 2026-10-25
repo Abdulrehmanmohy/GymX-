@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0a0c"/>
+      <stop offset="100%" stop-color="#141419"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34d399"/>
+      <stop offset="100%" stop-color="#10b981"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="16" flood-color="#10b981" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <!-- Background rounded rect -->
+  <rect width="512" height="512" rx="128" fill="url(#bg)"/>
+  <rect width="504" height="504" x="4" y="4" rx="124" fill="none" stroke="#222" stroke-width="2"/>
+
+  <!-- Athletic Barbell + Lightning Stylized X -->
+  <g transform="translate(256, 256)" filter="url(#shadow)">
+    <!-- Dumbbell / Weight plates -->
+    <!-- Center bar -->
+    <rect x="-140" y="-14" width="280" height="28" rx="8" fill="#4b5563"/>
+    
+    <!-- Outer left plate -->
+    <rect x="-180" y="-80" width="24" height="160" rx="8" fill="url(#accent)"/>
+    <rect x="-150" y="-60" width="16" height="120" rx="6" fill="#374151"/>
+    
+    <!-- Outer right plate -->
+    <rect x="156" y="-80" width="24" height="160" rx="8" fill="url(#accent)"/>
+    <rect x="134" y="-60" width="16" height="120" rx="6" fill="#374151"/>
+    
+    <!-- Center GymX badge -->
+    <circle cx="0" cy="0" r="100" fill="#111827" stroke="url(#glow)" stroke-width="6"/>
+    
+    <!-- Bold 'X' Letter athletic polygon -->
+    <path d="M-42,-50 L-14,-50 L18, -4 L50,-50 L78,-50 L32,10 L80,70 L52,70 L14,18 L-22,70 L-50,70 L-4,10 Z" fill="url(#glow)"/>
+    <polygon points="-65,-30 -35,-30 0,22 35,-30 65,-30 18,36 68,90 38,90 0,46 -38,90 -68,90 -18,36" fill="#ffffff" opacity="0.95"/>
+  </g>
+
+  <!-- Text GymX beneath -->
+  <text x="256" y="430" text-anchor="middle" font-family="'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="52" fill="#ffffff" letter-spacing="6">GYM<tspan fill="#10b981">X</tspan></text>
+</svg>

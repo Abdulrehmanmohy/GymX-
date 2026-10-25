@@ -1,6 +1,6 @@
 import React from 'react';
 import { ThemeMode, UserRole } from '../../types/gym';
-import { Shield, User, Settings, Flame } from 'lucide-react';
+import { Shield, User, Settings, Flame, Smartphone } from 'lucide-react';
 import { sounds } from '../../utils/audio';
 
 interface HeaderProps {
@@ -10,6 +10,7 @@ interface HeaderProps {
   onToggleRole: () => void;
   currentStreak: number;
   onOpenSettings?: () => void;
+  onOpenInstall?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -19,6 +20,7 @@ export const Header: React.FC<HeaderProps> = ({
   onToggleRole,
   currentStreak,
   onOpenSettings,
+  onOpenInstall,
 }) => {
   const isDark = theme === 'dark';
 
@@ -30,7 +32,7 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <header
       id="app-header"
-      className="sticky top-0 z-40 flex justify-between items-center w-full px-4 h-16 max-w-md mx-auto bg-black border-b border-zinc-800 shadow-2xl"
+      className="sticky top-0 z-40 flex justify-between items-center w-full px-4 h-16 max-w-4xl mx-auto bg-black border-b border-zinc-800 shadow-2xl"
     >
       {/* Leading: Athlete Avatar & KINETIC Brand */}
       <div className="flex items-center space-x-3">
@@ -91,6 +93,21 @@ export const Header: React.FC<HeaderProps> = ({
             </>
           )}
         </button>
+
+        {/* Install on Mobile App button */}
+        {onOpenInstall && (
+          <button
+            onClick={() => {
+              sounds.playClick();
+              onOpenInstall();
+            }}
+            className="h-9 px-3 rounded-xl flex items-center justify-center gap-1.5 bg-emerald-500 text-black hover:bg-emerald-400 font-bold text-xs transition-all active:scale-95 cursor-pointer shadow-md shadow-emerald-950/40"
+            title="Install GymX APK on Android"
+          >
+            <Smartphone className="w-3.5 h-3.5 text-black stroke-[2.5]" />
+            <span className="text-[11px] font-black uppercase font-mono tracking-tight">Install APK</span>
+          </button>
+        )}
 
         {/* Settings button */}
         {onOpenSettings && (

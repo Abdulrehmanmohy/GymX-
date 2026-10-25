@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { WorkoutRoutine, ScheduledTask, ThemeMode } from '../../types/gym';
 import { sounds } from '../../utils/audio';
+import { Zap, Dumbbell, Timer, Flame, Play, Disc, Shield, Calculator, Droplets, Check, Square, Smartphone } from 'lucide-react';
 
 interface TodayWorkoutHubProps {
   routine: WorkoutRoutine;
@@ -12,6 +13,7 @@ interface TodayWorkoutHubProps {
   onOpenWarmupModal: () => void;
   onToggleTaskComplete: (taskId: string) => void;
   onNavigateToTab?: (tab: string) => void;
+  onOpenInstall?: () => void;
 }
 
 export const TodayWorkoutHub: React.FC<TodayWorkoutHubProps> = ({
@@ -23,6 +25,7 @@ export const TodayWorkoutHub: React.FC<TodayWorkoutHubProps> = ({
   onOpenPlateCalc,
   onOpenWarmupModal,
   onToggleTaskComplete,
+  onOpenInstall,
 }) => {
   // Hydration state
   const [waterMl, setWaterMl] = useState<number>(2400);
@@ -55,11 +58,42 @@ export const TodayWorkoutHub: React.FC<TodayWorkoutHubProps> = ({
             ENERGY READINESS
           </span>
           <div className="flex items-center justify-end gap-1 text-emerald-400">
-            <span className="material-symbols-outlined text-sm material-symbols-fill">bolt</span>
+            <Zap className="w-4 h-4 fill-emerald-400 text-emerald-400" />
             <span className="font-metric text-xl font-bold leading-none">94%</span>
           </div>
         </div>
       </section>
+
+      {/* Quick Android APK & Install Callout Banner */}
+      {onOpenInstall && (
+        <button
+          onClick={() => {
+            sounds.playClick();
+            onOpenInstall();
+          }}
+          className="w-full p-2.5 px-3.5 rounded-xl bg-gradient-to-r from-emerald-950/80 via-zinc-900 to-emerald-950/80 border border-emerald-500/40 hover:border-emerald-400 flex items-center justify-between transition-all active:scale-[0.99] cursor-pointer shadow-lg shadow-black/60 group"
+        >
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-emerald-500 text-black flex items-center justify-center shrink-0">
+              <Smartphone className="w-4 h-4 stroke-[2.5]" />
+            </div>
+            <div className="text-left">
+              <span className="font-display text-xs font-black text-white flex items-center gap-1.5">
+                Install GymX on Android
+                <span className="px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-400 text-[9px] font-mono font-bold">
+                  APK READY
+                </span>
+              </span>
+              <span className="text-[10px] text-zinc-400 block">
+                1-Tap Install or Download APK file
+              </span>
+            </div>
+          </div>
+          <span className="text-xs font-bold font-mono text-emerald-400 group-hover:translate-x-0.5 transition-transform">
+            Get APK →
+          </span>
+        </button>
+      )}
 
       {/* EASY-TO-USE HERO START WORKOUT CARD */}
       <section className="relative rounded-2xl p-4 bg-zinc-950 border-2 border-emerald-500/60 shadow-2xl overflow-hidden">
@@ -91,10 +125,8 @@ export const TodayWorkoutHub: React.FC<TodayWorkoutHubProps> = ({
               }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
-            <div className="absolute bottom-1 left-1 flex items-center gap-0.5 text-emerald-400">
-              <span className="material-symbols-outlined text-xs material-symbols-fill">
-                fitness_center
-              </span>
+            <div className="absolute bottom-1 left-1 flex items-center gap-1 text-emerald-400">
+              <Dumbbell className="w-3 h-3" />
               <span className="text-[9px] font-bold font-mono">LIVE</span>
             </div>
           </div>
@@ -107,13 +139,11 @@ export const TodayWorkoutHub: React.FC<TodayWorkoutHubProps> = ({
             <p className="text-xs text-zinc-400 mt-0.5 line-clamp-1">{routine.focus}</p>
             <div className="flex items-center gap-3 mt-2 font-mono text-[11px] text-zinc-300">
               <span className="flex items-center gap-1">
-                <span className="material-symbols-outlined text-xs text-emerald-400">timer</span>
+                <Timer className="w-3.5 h-3.5 text-emerald-400" />
                 {routine.durationMin} mins
               </span>
               <span className="flex items-center gap-1">
-                <span className="material-symbols-outlined text-xs text-emerald-400">
-                  local_fire_department
-                </span>
+                <Flame className="w-3.5 h-3.5 text-emerald-400 fill-emerald-400/20" />
                 ~380 kcal
               </span>
             </div>
@@ -128,7 +158,7 @@ export const TodayWorkoutHub: React.FC<TodayWorkoutHubProps> = ({
           }}
           className="w-full py-4 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-display text-sm font-black uppercase tracking-wider flex items-center justify-center gap-2 active:scale-[0.98] transition-all cursor-pointer shadow-lg shadow-emerald-950/60"
         >
-          <span className="material-symbols-outlined text-2xl material-symbols-fill">play_arrow</span>
+          <Play className="w-5 h-5 fill-black" />
           <span>START WORKOUT NOW</span>
           <span className="ml-1 text-[11px] font-mono opacity-80 font-bold bg-black/20 px-2 py-0.5 rounded-md">
             1-TAP
@@ -155,7 +185,7 @@ export const TodayWorkoutHub: React.FC<TodayWorkoutHubProps> = ({
             className="p-3 rounded-xl bg-zinc-900 border border-zinc-800 hover:border-emerald-500/60 active:scale-95 transition-all text-left flex items-start gap-2.5 cursor-pointer shadow-sm group"
           >
             <div className="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-500/30 group-hover:bg-emerald-500 group-hover:text-black transition-colors">
-              <span className="material-symbols-outlined text-lg">disc_full</span>
+              <Disc className="w-4 h-4" />
             </div>
             <div>
               <span className="text-xs font-bold text-white block leading-tight">Barbell Plate Math</span>
@@ -172,7 +202,7 @@ export const TodayWorkoutHub: React.FC<TodayWorkoutHubProps> = ({
             className="p-3 rounded-xl bg-zinc-900 border border-zinc-800 hover:border-emerald-500/60 active:scale-95 transition-all text-left flex items-start gap-2.5 cursor-pointer shadow-sm group"
           >
             <div className="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-500/30 group-hover:bg-emerald-500 group-hover:text-black transition-colors">
-              <span className="material-symbols-outlined text-lg">shield</span>
+              <Shield className="w-4 h-4" />
             </div>
             <div>
               <span className="text-xs font-bold text-white block leading-tight">Warm-Up Sets</span>
@@ -189,7 +219,7 @@ export const TodayWorkoutHub: React.FC<TodayWorkoutHubProps> = ({
             className="p-3 rounded-xl bg-zinc-900 border border-zinc-800 hover:border-emerald-500/60 active:scale-95 transition-all text-left flex items-start gap-2.5 cursor-pointer shadow-sm group"
           >
             <div className="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-500/30 group-hover:bg-emerald-500 group-hover:text-black transition-colors">
-              <span className="material-symbols-outlined text-lg">calculate</span>
+              <Calculator className="w-4 h-4" />
             </div>
             <div>
               <span className="text-xs font-bold text-white block leading-tight">1RM & PR Math</span>
@@ -203,7 +233,7 @@ export const TodayWorkoutHub: React.FC<TodayWorkoutHubProps> = ({
             className="p-3 rounded-xl bg-zinc-900 border border-zinc-800 hover:border-emerald-500/60 active:scale-95 transition-all text-left flex items-start gap-2.5 cursor-pointer shadow-sm group"
           >
             <div className="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-500/30 group-hover:bg-emerald-500 group-hover:text-black transition-colors">
-              <span className="material-symbols-outlined text-lg">water_drop</span>
+              <Droplets className="w-4 h-4" />
             </div>
             <div>
               <span className="text-xs font-bold text-white block leading-tight">+250ml Water</span>
@@ -297,9 +327,11 @@ export const TodayWorkoutHub: React.FC<TodayWorkoutHubProps> = ({
                 }`}
                 title={task.completed ? 'Completed' : 'Mark complete'}
               >
-                <span className="material-symbols-outlined text-base">
-                  {task.completed ? 'check' : 'check_box_outline_blank'}
-                </span>
+                {task.completed ? (
+                  <Check className="w-4 h-4 text-black stroke-[3]" />
+                ) : (
+                  <Square className="w-4 h-4 text-zinc-500" />
+                )}
               </button>
             </div>
           ))}

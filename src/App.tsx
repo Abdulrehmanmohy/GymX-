@@ -36,11 +36,14 @@ import { OneRepMaxModal } from './components/workouts/OneRepMaxModal';
 import { WarmUpPyramidModal } from './components/workouts/WarmUpPyramidModal';
 import { THEME_PALETTES, ThemePaletteId } from './utils/themePalettes';
 import { ThemePaletteSelector } from './components/common/ThemePaletteSelector';
+import { InstallAppModal } from './components/common/InstallAppModal';
 import { sounds } from './utils/audio';
+import { Smartphone, X, Camera, Utensils } from 'lucide-react';
 
 export default function App() {
   // Navigation & Viewport State
   const [activeTab, setActiveTab] = useState<ActiveTab>('workouts');
+  const [scannerSubMode, setScannerSubMode] = useState<'camera' | 'diet'>('camera');
   const [theme, setTheme] = useState<ThemeMode>('dark');
   const [userRole, setUserRole] = useState<UserRole>('member');
   const [backendOnline, setBackendOnline] = useState<boolean>(true);
@@ -57,6 +60,25 @@ export default function App() {
   const [isPlateCalcOpen, setIsPlateCalcOpen] = useState<boolean>(false);
   const [is1RMCalcOpen, setIs1RMCalcOpen] = useState<boolean>(false);
   const [isWarmupOpen, setIsWarmupOpen] = useState<boolean>(false);
+
+  // Standalone PWA install state
+  const [isInstallModalOpen, setIsInstallModalOpen] = useState<boolean>(false);
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [isStandalone, setIsStandalone] = useState<boolean>(false);
+  const [dismissInstallBanner, setDismissInstallBanner] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone) {
+      setIsStandalone(true);
+    }
+
+    const handleBeforeInstall = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+    window.addEventListener('beforeinstallprompt', handleBeforeInstall);
+    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
+  }, []);
 
   const handleToggleMuted = () => {
     const next = !isMuted;
@@ -483,7 +505,36 @@ export default function App() {
           onToggleRole={handleToggleRole}
           currentStreak={currentMember.currentStreak}
           onOpenSettings={() => setIsPaletteModalOpen(true)}
+          onOpenInstall={() => setIsInstallModalOpen(true)}
         />
+
+        {/* Unmissable Top Android APK Download & Install Callout Banner */}
+        <div className="w-full px-3 sm:px-5 pt-3">
+          <button
+            onClick={() => {
+              sounds.playClick();
+              setIsInstallModalOpen(true);
+            }}
+            className="w-full py-2.5 px-4 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-400 hover:from-emerald-400 hover:to-teal-300 text-black font-display font-black text-xs sm:text-sm flex items-center justify-between shadow-xl shadow-emerald-500/20 active:scale-[0.99] transition-all cursor-pointer group"
+          >
+            <div className="flex items-center gap-2.5">
+              <span className="w-7 h-7 rounded-xl bg-black text-emerald-400 flex items-center justify-center font-bold text-sm shrink-0">
+                📱
+              </span>
+              <div className="text-left">
+                <span className="block font-black tracking-wide text-black text-xs sm:text-sm">
+                  DOWNLOAD ANDROID APK / INSTALL APP
+                </span>
+                <span className="block text-[10px] font-normal text-zinc-900 font-mono">
+                  Tap here to download .apk file or install on Android phone
+                </span>
+              </div>
+            </div>
+            <span className="px-3 py-1.5 rounded-xl bg-black text-emerald-400 text-xs font-mono font-black group-hover:scale-105 transition-transform flex items-center gap-1 shrink-0">
+              INSTALL NOW →
+            </span>
+          </button>
+        </div>
 
         {/* Dynamic Main Module Viewport */}
         <main className="flex-1 p-3 sm:p-5 overflow-y-auto">
@@ -538,6 +589,7 @@ export default function App() {
                   onOpenPlateCalc={() => setIsPlateCalcOpen(true)}
                   onOpenWarmupModal={() => setIsWarmupOpen(true)}
                   onToggleTaskComplete={handleToggleTask}
+                  onOpenInstall={() => setIsInstallModalOpen(true)}
                 />
               ) : (
                 <DailyPlannerModule
@@ -555,32 +607,89 @@ export default function App() {
           )}
 
           {activeTab === 'analytics' && (
-            <AnalyticsPerformanceModule
+            <WorkoutsModule
+              exerciseLibrary={exerciseLibrary}
+              routines={routines}
               theme={theme}
-              onOpenLiveWorkout={() => setActiveLiveRoutine(routines[0])}
+              onSaveRoutine={handleSaveRoutine}
+              onLogCompletedWorkout={handleLogCompletedWorkout}
+              initialSubTab="analytics"
             />
           )}
 
           {activeTab === 'scanner' && (
-            <SmartFoodScannerModule
-              theme={theme}
-              onLogScannedMeal={handleAddMeal}
-              onNavigateToDiet={() => setActiveTab('diet')}
-            />
+            <div className="space-y-4 animate-fadeIn">
+              {/* Top Sub-Switcher between Food Scanner and Diet & Macros */}
+              <div className="p-1 rounded-2xl border border-zinc-800 bg-zinc-950 flex items-center gap-1 shadow-md">
+                <button
+                  onClick={() => {
+                    sounds.playClick();
+                    setScannerSubMode('camera');
+                  }}
+                  className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                    scannerSubMode === 'camera'
+                      ? 'bg-emerald-500 text-black font-black shadow-md shadow-emerald-950/50'
+                      : 'text-zinc-400 hover:text-white'
+                  }`}
+                >
+                  <Camera className="w-3.5 h-3.5" />
+                  <span>AI Food Scanner</span>
+                </button>
+                <button
+                  onClick={() => {
+                    sounds.playClick();
+                    setScannerSubMode('diet');
+                  }}
+                  className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                    scannerSubMode === 'diet'
+                      ? 'bg-emerald-500 text-black font-black shadow-md shadow-emerald-950/50'
+                      : 'text-zinc-400 hover:text-white'
+                  }`}
+                >
+                  <Utensils className="w-3.5 h-3.5" />
+                  <span>Daily Diet & Macros ({meals.length})</span>
+                </button>
+              </div>
+
+              {scannerSubMode === 'camera' ? (
+                <SmartFoodScannerModule
+                  theme={theme}
+                  onLogScannedMeal={handleAddMeal}
+                  onNavigateToDiet={() => setScannerSubMode('diet')}
+                />
+              ) : (
+                <DailyDietModule
+                  meals={meals}
+                  waterIntakeMl={waterIntakeMl}
+                  waterTargetMl={waterTargetMl}
+                  theme={theme}
+                  onAddMeal={handleAddMeal}
+                  onDeleteMeal={handleDeleteMeal}
+                  onUpdateWater={handleUpdateWater}
+                  onResetWater={handleResetWater}
+                  onNavigateToScanner={() => setScannerSubMode('camera')}
+                />
+              )}
+            </div>
           )}
 
           {activeTab === 'diet' && (
-            <DailyDietModule
-              meals={meals}
-              waterIntakeMl={waterIntakeMl}
-              waterTargetMl={waterTargetMl}
-              theme={theme}
-              onAddMeal={handleAddMeal}
-              onDeleteMeal={handleDeleteMeal}
-              onUpdateWater={handleUpdateWater}
-              onResetWater={handleResetWater}
-              onNavigateToScanner={() => setActiveTab('scanner')}
-            />
+            <div className="space-y-4 animate-fadeIn">
+              <DailyDietModule
+                meals={meals}
+                waterIntakeMl={waterIntakeMl}
+                waterTargetMl={waterTargetMl}
+                theme={theme}
+                onAddMeal={handleAddMeal}
+                onDeleteMeal={handleDeleteMeal}
+                onUpdateWater={handleUpdateWater}
+                onResetWater={handleResetWater}
+                onNavigateToScanner={() => {
+                  setActiveTab('scanner');
+                  setScannerSubMode('camera');
+                }}
+              />
+            </div>
           )}
 
           {activeTab === 'attendance' && (
@@ -595,6 +704,55 @@ export default function App() {
             />
           )}
         </main>
+
+        {/* Floating Mobile Android Install Prompt Bar */}
+        {!isStandalone && !dismissInstallBanner && (
+          <aside
+            aria-label="Install App Prompt"
+            className="fixed bottom-20 left-3 right-3 z-40 max-w-md mx-auto bg-zinc-950/95 border-2 border-emerald-500/60 rounded-2xl p-3 shadow-2xl backdrop-blur-md flex items-center justify-between gap-2.5 animate-fadeIn"
+          >
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="w-9 h-9 rounded-xl bg-emerald-500 text-black flex items-center justify-center shrink-0 shadow-md">
+                <Smartphone className="w-5 h-5 stroke-[2.5]" />
+              </div>
+              <div className="min-w-0">
+                <span className="font-display text-xs font-black text-white block leading-tight truncate">
+                  Install GymX Android App
+                </span>
+                <span className="text-[10px] text-zinc-400 block truncate">
+                  Add to home screen in 1-tap
+                </span>
+              </div>
+            </div>
+            <div className="flex items-center gap-1.5 shrink-0">
+              <button
+                onClick={() => {
+                  sounds.playClick();
+                  if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    deferredPrompt.userChoice.then((choice: any) => {
+                      if (choice.outcome === 'accepted') {
+                        setIsStandalone(true);
+                      }
+                    });
+                  } else {
+                    setIsInstallModalOpen(true);
+                  }
+                }}
+                className="py-1.5 px-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-display font-black text-xs uppercase cursor-pointer active:scale-95 shadow-lg shadow-emerald-500/30 flex items-center gap-1"
+              >
+                Install
+              </button>
+              <button
+                onClick={() => setDismissInstallBanner(true)}
+                className="w-7 h-7 rounded-lg text-zinc-400 hover:text-white flex items-center justify-center cursor-pointer active:scale-90"
+                title="Dismiss"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </aside>
+        )}
 
         {/* Bottom Tab Navigation Bar */}
         <BottomNav activeTab={activeTab} onTabChange={setActiveTab} theme={theme} />
@@ -648,6 +806,21 @@ export default function App() {
           isDark={isDark}
           isMuted={isMuted}
           onToggleMuted={handleToggleMuted}
+        />
+
+        {/* Mobile PWA Install & QR Code Modal */}
+        <InstallAppModal
+          isOpen={isInstallModalOpen}
+          onClose={() => setIsInstallModalOpen(false)}
+          deferredPrompt={deferredPrompt}
+          onInstallSuccess={() => {
+            setActiveNotification({
+              id: `install-${Date.now()}`,
+              title: '🎉 GymX App Installed',
+              body: 'GymX has been successfully added to your device home screen!',
+              category: 'system',
+            });
+          }}
         />
       </div>
     </div>

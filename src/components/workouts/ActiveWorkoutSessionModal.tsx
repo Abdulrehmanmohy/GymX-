@@ -9,6 +9,18 @@ import {
   Flame,
   TrendingUp,
   Video,
+  ChevronDown,
+  Flag,
+  Heart,
+  Timer,
+  Minus,
+  Plus,
+  CheckCircle,
+  SkipBack,
+  SkipForward,
+  Trophy,
+  Lock,
+  Circle,
 } from 'lucide-react';
 import { PlateCalculatorModal } from './PlateCalculatorModal';
 import { ExerciseSwapModal } from './ExerciseSwapModal';
@@ -274,7 +286,7 @@ export const ActiveWorkoutSessionModal: React.FC<ActiveWorkoutSessionModalProps>
           type="button"
           title="Minimize Session"
         >
-          <span className="material-symbols-outlined text-[20px]">keyboard_arrow_down</span>
+          <ChevronDown className="w-5 h-5" />
         </button>
 
         {/* Central Header Exercise Identity & Progress Indicator */}
@@ -300,7 +312,7 @@ export const ActiveWorkoutSessionModal: React.FC<ActiveWorkoutSessionModalProps>
           type="button"
           title="Complete Workout"
         >
-          <span className="material-symbols-outlined text-[20px]">flag</span>
+          <Flag className="w-4 h-4" />
         </button>
       </header>
 
@@ -312,9 +324,7 @@ export const ActiveWorkoutSessionModal: React.FC<ActiveWorkoutSessionModalProps>
             {/* Heart Rate & ECG */}
             <div className="flex flex-col items-center justify-center px-1">
               <div className="flex items-center gap-1 mb-0.5">
-                <span className="material-symbols-outlined text-emerald-400 text-[16px] heart-pulse material-symbols-fill">
-                  favorite
-                </span>
+                <Heart className="w-4 h-4 text-emerald-400 fill-emerald-400 heart-pulse" />
                 <span className="font-label-caps text-[9px] text-emerald-400">ZONE 4</span>
               </div>
               <div className="flex items-baseline gap-0.5">
@@ -337,9 +347,7 @@ export const ActiveWorkoutSessionModal: React.FC<ActiveWorkoutSessionModalProps>
             {/* Total Burned Energy */}
             <div className="flex flex-col items-center justify-center px-1">
               <div className="flex items-center gap-1 mb-0.5">
-                <span className="material-symbols-outlined text-emerald-400 text-[16px]">
-                  local_fire_department
-                </span>
+                <Flame className="w-4 h-4 text-emerald-400 fill-emerald-400/20" />
                 <span className="font-label-caps text-[9px] text-zinc-400">ACTIVE</span>
               </div>
               <div className="flex items-baseline gap-0.5">
@@ -356,7 +364,7 @@ export const ActiveWorkoutSessionModal: React.FC<ActiveWorkoutSessionModalProps>
             {/* Elapsed Session Clock */}
             <div className="flex flex-col items-center justify-center px-1">
               <div className="flex items-center gap-1 mb-0.5">
-                <span className="material-symbols-outlined text-zinc-300 text-[16px]">timer</span>
+                <Timer className="w-4 h-4 text-zinc-300" />
                 <span className="font-label-caps text-[9px] text-zinc-400">ELAPSED</span>
               </div>
               <div className="flex items-baseline gap-0.5">
@@ -416,7 +424,7 @@ export const ActiveWorkoutSessionModal: React.FC<ActiveWorkoutSessionModalProps>
                 {isRestTimerActive ? `${restSecondsLeft}s` : formatTimer(elapsedSeconds)}
               </span>
               <div className="flex items-center gap-1.5 bg-black px-2.5 py-1 rounded-full border border-zinc-800 shadow-sm">
-                <span className="material-symbols-outlined text-emerald-400 text-[13px]">flag</span>
+                <Flag className="w-3 h-3 text-emerald-400" />
                 <span className="font-label-caps text-[10px] font-bold text-white">
                   TARGET: {currentRoutineExercise?.reps || '8-10'} REPS
                 </span>
@@ -549,7 +557,7 @@ export const ActiveWorkoutSessionModal: React.FC<ActiveWorkoutSessionModalProps>
                             className="w-7 h-7 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-white flex items-center justify-center active:scale-90 transition-transform cursor-pointer"
                             type="button"
                           >
-                            <span className="material-symbols-outlined text-[16px]">remove</span>
+                            <Minus className="w-3.5 h-3.5" />
                           </button>
                           <span className="font-metric text-lg font-black text-white">
                             {set.weightKg}
@@ -559,7 +567,7 @@ export const ActiveWorkoutSessionModal: React.FC<ActiveWorkoutSessionModalProps>
                             className="w-7 h-7 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-white flex items-center justify-center active:scale-90 transition-transform cursor-pointer"
                             type="button"
                           >
-                            <span className="material-symbols-outlined text-[16px]">add</span>
+                            <Plus className="w-3.5 h-3.5" />
                           </button>
                         </div>
                       </div>
@@ -575,7 +583,7 @@ export const ActiveWorkoutSessionModal: React.FC<ActiveWorkoutSessionModalProps>
                             className="w-7 h-7 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-white flex items-center justify-center active:scale-90 transition-transform cursor-pointer"
                             type="button"
                           >
-                            <span className="material-symbols-outlined text-[16px]">remove</span>
+                            <Minus className="w-3.5 h-3.5" />
                           </button>
                           <span className="font-metric text-lg font-black text-white">
                             {set.reps}
@@ -585,7 +593,7 @@ export const ActiveWorkoutSessionModal: React.FC<ActiveWorkoutSessionModalProps>
                             className="w-7 h-7 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-white flex items-center justify-center active:scale-90 transition-transform cursor-pointer"
                             type="button"
                           >
-                            <span className="material-symbols-outlined text-[16px]">add</span>
+                            <Plus className="w-3.5 h-3.5" />
                           </button>
                         </div>
                       </div>
@@ -639,9 +647,11 @@ export const ActiveWorkoutSessionModal: React.FC<ActiveWorkoutSessionModalProps>
                         {set.reps} <span className="text-xs text-zinc-400">reps</span>
                       </span>
                     </div>
-                    <span className="material-symbols-outlined text-zinc-500 text-[18px]">
-                      {isDone ? 'lock' : 'radio_button_unchecked'}
-                    </span>
+                    {isDone ? (
+                      <Lock className="w-4 h-4 text-zinc-500" />
+                    ) : (
+                      <Circle className="w-4 h-4 text-zinc-600" />
+                    )}
                   </div>
                 </div>
               );
@@ -706,7 +716,7 @@ export const ActiveWorkoutSessionModal: React.FC<ActiveWorkoutSessionModalProps>
             className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-display text-base font-black uppercase py-4 px-4 rounded-xl flex items-center justify-center gap-2 shadow-[0_0_24px_rgba(16,185,129,0.5)] active:scale-[0.97] transition-all tracking-wider cursor-pointer"
             type="button"
           >
-            <span className="material-symbols-outlined text-[22px] font-bold">check_circle</span>
+            <CheckCircle className="w-5 h-5 text-black stroke-[2.5]" />
             <span>LOG SET & START REST</span>
           </button>
 
@@ -721,7 +731,7 @@ export const ActiveWorkoutSessionModal: React.FC<ActiveWorkoutSessionModalProps>
               className="bg-zinc-900 hover:bg-zinc-800 disabled:opacity-30 text-zinc-300 hover:text-white py-2 px-3 rounded-xl border border-zinc-800 flex items-center justify-center gap-1.5 active:scale-95 transition-all cursor-pointer"
               type="button"
             >
-              <span className="material-symbols-outlined text-[16px]">skip_previous</span>
+              <SkipBack className="w-4 h-4" />
               <span className="font-label-caps text-[10px]">PREV EXERCISE</span>
             </button>
 
@@ -740,7 +750,7 @@ export const ActiveWorkoutSessionModal: React.FC<ActiveWorkoutSessionModalProps>
               <span className="font-label-caps text-[10px] truncate">
                 {nextExercise ? `NEXT: ${nextExercise.name.split(' ')[0]}` : 'FINISH WORKOUT'}
               </span>
-              <span className="material-symbols-outlined text-[16px]">skip_next</span>
+              <SkipForward className="w-4 h-4" />
             </button>
           </div>
         </div>
@@ -750,7 +760,7 @@ export const ActiveWorkoutSessionModal: React.FC<ActiveWorkoutSessionModalProps>
       {isWorkoutCompleted && (
         <div className="absolute inset-0 z-50 bg-black flex flex-col items-center justify-center p-6 text-center animate-in zoom-in-95">
           <div className="w-20 h-20 rounded-3xl bg-emerald-500 text-white flex items-center justify-center shadow-2xl shadow-emerald-950/60 mb-4 animate-bounce">
-            <span className="material-symbols-outlined text-4xl">emoji_events</span>
+            <Trophy className="w-10 h-10 text-white" />
           </div>
           <h2 className="text-2xl font-black font-display text-white">Workout Crushed!</h2>
           <p className="text-xs text-zinc-400 mt-1.5 max-w-xs font-mono">
