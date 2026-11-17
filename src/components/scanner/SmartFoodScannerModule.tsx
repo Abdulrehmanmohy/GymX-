@@ -33,8 +33,10 @@ export const SmartFoodScannerModule: React.FC<SmartFoodScannerModuleProps> = ({
 
   // Camera & Image state
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const timeoutsRef = useRef<number[]>([]);
 
   const [isCameraActive, setIsCameraActive] = useState<boolean>(false);
   const [cameraError, setCameraError] = useState<string | null>(null);
@@ -49,25 +51,32 @@ export const SmartFoodScannerModule: React.FC<SmartFoodScannerModuleProps> = ({
   const [targetMealType, setTargetMealType] = useState<MealEntry['mealType']>('Lunch');
   const [loggedSuccess, setLoggedSuccess] = useState<boolean>(false);
 
+  const clearScheduledTimeouts = () => {
+    timeoutsRef.current.forEach((id) => window.clearTimeout(id));
+    timeoutsRef.current = [];
+  };
+
   // Start Camera Stream
-  const startCamera = async () => {
+  const startCamera = async (modeOverride?: 'environment' | 'user') => {
     setCameraError(null);
+    const activeMode = modeOverride || facingMode;
     try {
-      if (videoRef.current && videoRef.current.srcObject) {
-        const stream = videoRef.current.srcObject as MediaStream;
-        stream.getTracks().forEach((track) => track.stop());
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error('Camera API unavailable in this browser context');
+      }
+
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((track) => track.stop());
+        streamRef.current = null;
       }
 
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: facingMode, width: { ideal: 1280 }, height: { ideal: 720 } },
+        video: { facingMode: activeMode, width: { ideal: 1280 }, height: { ideal: 720 } },
         audio: false,
       });
 
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        videoRef.current.play();
-        setIsCameraActive(true);
-      }
+      streamRef.current = stream;
+      setIsCameraActive(true);
     } catch (err: any) {
       console.error('Camera access failed:', err);
       setCameraError('Camera access denied or device unavailable. You can upload an image or choose a preset meal below.');
@@ -75,8 +84,20 @@ export const SmartFoodScannerModule: React.FC<SmartFoodScannerModuleProps> = ({
     }
   };
 
+  // Attach MediaStream once <video> mounts into the DOM
+  useEffect(() => {
+    if (isCameraActive && videoRef.current && streamRef.current) {
+      videoRef.current.srcObject = streamRef.current;
+      videoRef.current.play().catch(() => {});
+    }
+  }, [isCameraActive]);
+
   // Stop Camera
   const stopCamera = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => track.stop());
+      streamRef.current = null;
+    }
     if (videoRef.current && videoRef.current.srcObject) {
       const stream = videoRef.current.srcObject as MediaStream;
       stream.getTracks().forEach((track) => track.stop());
@@ -88,6 +109,7 @@ export const SmartFoodScannerModule: React.FC<SmartFoodScannerModuleProps> = ({
   // Cleanup on unmount
   useEffect(() => {
     return () => {
+      clearScheduledTimeouts();
       stopCamera();
     };
   }, []);
@@ -114,8 +136,10 @@ export const SmartFoodScannerModule: React.FC<SmartFoodScannerModuleProps> = ({
   // Upload image from file input with auto-downscaling to prevent high memory or transfer lag
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    e.target.value = '';
     if (!file) return;
 
+    const fileName = file.name;
     sounds.playClick();
     const reader = new FileReader();
     reader.onload = () => {
@@ -143,17 +167,17 @@ export const SmartFoodScannerModule: React.FC<SmartFoodScannerModuleProps> = ({
           const optimizedUri = canvas.toDataURL('image/jpeg', 0.85);
           setCapturedImageUri(optimizedUri);
           stopCamera();
-          analyzeMealImage(optimizedUri);
+          analyzeMealImage(optimizedUri, fileName);
         } else {
           setCapturedImageUri(rawUri);
           stopCamera();
-          analyzeMealImage(rawUri);
+          analyzeMealImage(rawUri, fileName);
         }
       };
       img.onerror = () => {
         setCapturedImageUri(rawUri);
         stopCamera();
-        analyzeMealImage(rawUri);
+        analyzeMealImage(rawUri, fileName);
       };
       img.src = rawUri;
     };
@@ -162,6 +186,7 @@ export const SmartFoodScannerModule: React.FC<SmartFoodScannerModuleProps> = ({
 
   // Select a preset demo meal
   const handleSelectPreset = (preset: typeof PRESET_SCAN_SAMPLES[0]) => {
+    clearScheduledTimeouts();
     setCapturedImageUri(preset.imageUrl);
     stopCamera();
     setIsAnalyzing(true);
@@ -171,20 +196,22 @@ export const SmartFoodScannerModule: React.FC<SmartFoodScannerModuleProps> = ({
 
     // Realistic scanning sequence
     setAnalysisStatusText('Initiating High-Speed Neural Vision Scanner...');
-    setTimeout(() => {
-      setAnalysisStatusText('Segmenting individual macro elements & portion sizes...');
-    }, 600);
-    setTimeout(() => {
-      setAnalysisStatusText('Computing bioavailable athletic protein ratio...');
-    }, 1100);
-    setTimeout(() => {
-      setScanResult(preset.data);
-      setIsAnalyzing(false);
-    }, 1500);
+    timeoutsRef.current.push(
+      window.setTimeout(() => {
+        setAnalysisStatusText('Segmenting individual macro elements & portion sizes...');
+      }, 600),
+      window.setTimeout(() => {
+        setAnalysisStatusText('Computing bioavailable athletic protein ratio...');
+      }, 1100),
+      window.setTimeout(() => {
+        setScanResult(preset.data);
+        setIsAnalyzing(false);
+      }, 1500)
+    );
   };
 
   // Analyze meal image with Vision API server endpoint
-  const analyzeMealImage = async (base64Uri: string) => {
+  const analyzeMealImage = async (base64Uri: string, fileName: string = '') => {
     setIsAnalyzing(true);
     setScanResult(null);
     setScanError(null);
@@ -199,6 +226,7 @@ export const SmartFoodScannerModule: React.FC<SmartFoodScannerModuleProps> = ({
         body: JSON.stringify({
           imageBase64: base64Uri,
           mimeType: 'image/jpeg',
+          fileName,
           notes: 'High-protein gym athlete diet breakdown',
         }),
       });
@@ -258,6 +286,7 @@ export const SmartFoodScannerModule: React.FC<SmartFoodScannerModuleProps> = ({
   };
 
   const resetScanner = () => {
+    clearScheduledTimeouts();
     setCapturedImageUri(null);
     setScanResult(null);
     setScanError(null);
@@ -282,7 +311,7 @@ export const SmartFoodScannerModule: React.FC<SmartFoodScannerModuleProps> = ({
         <div>
           <div className="flex items-center gap-1.5">
             <span className="text-xl font-black tracking-tight font-display">Macro Food Scanner</span>
-            <span className="text-[10px] font-extrabold px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-0.5">
+            <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-0.5">
               <Sparkles className="w-3 h-3" /> Neural Vision
             </span>
           </div>
@@ -318,7 +347,7 @@ export const SmartFoodScannerModule: React.FC<SmartFoodScannerModuleProps> = ({
               />
 
               {/* Laser Scanline Animation */}
-              <div className="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-red-500 to-transparent shadow-lg shadow-emerald-900/80 animate-bounce" />
+              <div className="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-emerald-400 to-transparent shadow-lg shadow-emerald-900/80 animate-bounce" />
 
               {/* Viewfinder Target Reticle */}
               <div className="absolute inset-8 border-2 border-dashed border-emerald-500/60 rounded-2xl pointer-events-none flex flex-col justify-between p-2">
@@ -352,8 +381,9 @@ export const SmartFoodScannerModule: React.FC<SmartFoodScannerModuleProps> = ({
 
                 <button
                   onClick={() => {
-                    setFacingMode((m) => (m === 'environment' ? 'user' : 'environment'));
-                    startCamera();
+                    const nextMode = facingMode === 'environment' ? 'user' : 'environment';
+                    setFacingMode(nextMode);
+                    startCamera(nextMode);
                   }}
                   className="p-2.5 rounded-full bg-zinc-900/80 border border-zinc-700 text-zinc-300 hover:text-white cursor-pointer"
                   title="Switch Camera"
@@ -423,7 +453,7 @@ export const SmartFoodScannerModule: React.FC<SmartFoodScannerModuleProps> = ({
               <div className="flex flex-col sm:flex-row items-center gap-2 pt-1">
                 <button
                   id="activate-camera-btn"
-                  onClick={startCamera}
+                  onClick={() => startCamera()}
                   className="w-full py-2.5 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/30 active:scale-95 transition-all cursor-pointer"
                 >
                   <Camera className="w-4 h-4" />
@@ -604,7 +634,7 @@ export const SmartFoodScannerModule: React.FC<SmartFoodScannerModuleProps> = ({
               {scanResult.items.map((item, idx) => (
                 <div
                   key={idx}
-                  className="p-2.5 rounded-xl bg-zinc-800/60 border border-zinc-750 flex items-center justify-between text-xs"
+                  className="p-2.5 rounded-xl bg-zinc-800/60 border border-zinc-700 flex items-center justify-between text-xs"
                 >
                   <div>
                     <span className="font-bold text-zinc-200">{item.name}</span>
@@ -683,7 +713,7 @@ export const SmartFoodScannerModule: React.FC<SmartFoodScannerModuleProps> = ({
               onClick={() => handleSelectPreset(preset)}
               className={`p-2 rounded-2xl border text-left transition-all group overflow-hidden ${
                 isDark
-                  ? 'bg-zinc-900/60 border-zinc-800 hover:border-emerald-500/50 hover:bg-zinc-850'
+                  ? 'bg-zinc-900/60 border-zinc-800 hover:border-emerald-500/50 hover:bg-zinc-800'
                   : 'bg-white border-zinc-200 hover:border-zinc-400 hover:shadow-sm'
               }`}
             >

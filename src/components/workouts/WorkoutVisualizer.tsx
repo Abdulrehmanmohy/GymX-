@@ -15,41 +15,43 @@ export const WorkoutVisualizer: React.FC<WorkoutVisualizerProps> = ({
 }) => {
   const isDark = theme === 'dark';
   const [isPlaying, setIsPlaying] = useState(true);
-  const [tempoPhase, setTempoPhase] = useState<'Eccentric (Lowering)' | 'Isometric (Hold)' | 'Concentric (Explode)'>('Eccentric (Lowering)');
-  const [phaseSeconds, setPhaseSeconds] = useState(3);
-  const [repsDone, setRepsDone] = useState(0);
+  const [cadenceState, setCadenceState] = useState<{
+    tempoPhase: 'Eccentric (Lowering)' | 'Isometric (Hold)' | 'Concentric (Explode)';
+    phaseSeconds: number;
+    repsDone: number;
+  }>({
+    tempoPhase: 'Eccentric (Lowering)',
+    phaseSeconds: 3,
+    repsDone: 0,
+  });
+
+  const { tempoPhase, phaseSeconds, repsDone } = cadenceState;
 
   // Tempo rhythm loop
   useEffect(() => {
     if (!isPlaying) return;
 
     const interval = setInterval(() => {
-      setPhaseSeconds((prev) => {
-        if (prev > 1) {
-          return prev - 1;
-        } else {
-          // Transition phase
-          setTempoPhase((currentPhase) => {
-            if (currentPhase === 'Eccentric (Lowering)') {
-              return 'Isometric (Hold)';
-            } else if (currentPhase === 'Isometric (Hold)') {
-              return 'Concentric (Explode)';
-            } else {
-              setRepsDone((r) => r + 1);
-              return 'Eccentric (Lowering)';
-            }
-          });
-
-          // Reset seconds according to phase
-          if (tempoPhase === 'Eccentric (Lowering)') return 1; // hold
-          if (tempoPhase === 'Isometric (Hold)') return 1; // explode
-          return 3; // lowering
+      setCadenceState((prev) => {
+        if (prev.phaseSeconds > 1) {
+          return { ...prev, phaseSeconds: prev.phaseSeconds - 1 };
         }
+        if (prev.tempoPhase === 'Eccentric (Lowering)') {
+          return { ...prev, tempoPhase: 'Isometric (Hold)', phaseSeconds: 1 };
+        }
+        if (prev.tempoPhase === 'Isometric (Hold)') {
+          return { ...prev, tempoPhase: 'Concentric (Explode)', phaseSeconds: 1 };
+        }
+        return {
+          tempoPhase: 'Eccentric (Lowering)',
+          phaseSeconds: 3,
+          repsDone: prev.repsDone + 1,
+        };
       });
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [isPlaying, tempoPhase]);
+  }, [isPlaying]);
 
   // Primary muscle highlight color based on muscle group
   const getMuscleAccentColor = (group: string) => {
@@ -213,9 +215,11 @@ export const WorkoutVisualizer: React.FC<WorkoutVisualizerProps> = ({
 
           <button
             onClick={() => {
-              setRepsDone(0);
-              setTempoPhase('Eccentric (Lowering)');
-              setPhaseSeconds(3);
+              setCadenceState({
+                repsDone: 0,
+                tempoPhase: 'Eccentric (Lowering)',
+                phaseSeconds: 3,
+              });
             }}
             className={`p-2 rounded-xl border transition-all active:scale-95 ${
               isDark
@@ -257,7 +261,7 @@ export const WorkoutVisualizer: React.FC<WorkoutVisualizerProps> = ({
       {/* Step-by-Step Instructions */}
       <div className="space-y-2">
         <h4 className="text-xs uppercase font-extrabold tracking-wider text-zinc-400 flex items-center gap-1.5">
-          <Info className="w-3.5 h-3.5 text-red-500" />
+          <Info className="w-3.5 h-3.5 text-emerald-400" />
           Step-by-Step Execution
         </h4>
         <ol className="space-y-2 text-xs">
@@ -268,7 +272,7 @@ export const WorkoutVisualizer: React.FC<WorkoutVisualizerProps> = ({
                 isDark ? 'bg-zinc-900/50 border-zinc-800/80 text-zinc-300' : 'bg-zinc-50 border-zinc-200 text-zinc-700'
               }`}
             >
-              <span className="w-5 h-5 rounded-full bg-red-500/20 text-red-500 border border-red-500/30 flex items-center justify-center shrink-0 font-bold text-[11px]">
+              <span className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center shrink-0 font-bold text-[11px]">
                 {idx + 1}
               </span>
               <span>{step}</span>

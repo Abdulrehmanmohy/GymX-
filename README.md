@@ -198,48 +198,39 @@ The GymX backend provides clean, documented REST endpoints:
 gymx/
 ├── index.html                   # HTML entry point with meta & OpenGraph tags
 ├── package.json                 # Project dependencies and script declarations
-├── server.ts                    # Express REST API backend and dev Vite server
+├── server.ts                    # Node/Express entry point (dev Vite + prod dist server)
+├── vercel.json                  # Vercel SPA & /api/* serverless routing
+├── netlify.toml                 # Netlify SPA & /api/* function routing
+├── api/
+│   └── index.ts                 # Vercel serverless Express handler
+├── netlify/
+│   └── functions/
+│       └── api.ts               # Netlify serverless-http Express handler
 ├── tsconfig.json                # TypeScript compiler configuration
 ├── vite.config.ts               # Vite configuration with Tailwind CSS plugins
 ├── .env.example                 # Environment configuration template
 └── src/
-    ├── App.tsx                  # Root application router and layout coordinator
+    ├── App.tsx                  # Root state coordinator with localStorage + REST sync
     ├── main.tsx                 # React DOM mount entry point
-    ├── index.css                # Global Tailwind CSS imports and utility styling
+    ├── index.css                # Global Tailwind CSS imports and animations
+    ├── server/
+    │   └── createApp.ts         # Shared Express REST API factory
     ├── components/
-    │   ├── common/              # Shared header, navigation, and theme selectors
-    │   │   ├── Header.tsx
-    │   │   ├── BottomNav.tsx
-    │   │   ├── NotificationBanner.tsx
-    │   │   └── ThemePaletteSelector.tsx
-    │   ├── workouts/            # Workout sessions, routines, and lifter tools
-    │   │   ├── WorkoutsModule.tsx
-    │   │   ├── ActiveWorkoutSessionModal.tsx
-    │   │   ├── CustomRoutineBuilderModal.tsx
-    │   │   ├── PlateCalculatorModal.tsx
-    │   │   ├── OneRepMaxModal.tsx
-    │   │   ├── WarmUpPyramidModal.tsx
-    │   │   ├── ExerciseSwapModal.tsx
-    │   │   ├── AnimatedExerciseCanvas.tsx
-    │   │   ├── WorkoutVisualizer.tsx
-    │   │   └── ExerciseVideoPlayer.tsx
-    │   ├── planner/             # Calendar and task scheduling
-    │   │   ├── DailyPlannerModule.tsx
-    │   │   └── TodayWorkoutHub.tsx
-    │   ├── diet/                # Macro tracking and meal management
-    │   │   └── DailyDietModule.tsx
-    │   ├── scanner/             # Nutritional vision scanner
-    │   │   └── SmartFoodScannerModule.tsx
-    │   ├── attendance/          # Member passes and attendance desk
-    │   │   └── AttendanceModule.tsx
-    │   └── analytics/           # Volume and streak analytics
-    │       └── AnalyticsPerformanceModule.tsx
+    │   ├── common/              # Shared header, bottom nav, install modal, theme selector
+    │   ├── workouts/            # Workout sessions, routines, analytics, lifter tools
+    │   ├── planner/             # Today HUD & calendar planner
+    │   ├── diet/                # Macro tracking and hydration
+    │   ├── scanner/             # Nutritional camera & upload scanner
+    │   ├── attendance/          # Front desk register & member QR pass
+    │   └── analytics/           # Volume, recovery & PR analytics
     ├── data/
     │   └── gymData.ts           # Initial exercise library, seed data, and helpers
     ├── types/
-    │   └── gymTypes.ts          # Core TypeScript models and data structures
+    │   └── gym.ts               # Core TypeScript models and interfaces
     └── utils/
-        └── themePalettes.ts     # Color themes and dynamic styling palettes
+        ├── audio.ts             # Web Audio feedback synth
+        ├── date.ts              # Local YYYY-MM-DD date helpers
+        └── themePalettes.ts     # Color themes and dynamic CSS palette variables
 ```
 
 ---
@@ -278,11 +269,35 @@ gymx/
 
 | Command | Action |
 |---|---|
-| `npm run dev` | Starts full-stack dev server with Express & Vite HMR on port 3000 |
-| `npm run build` | Compiles frontend via Vite and bundles backend via ESBuild into `dist/` |
-| `npm run start` | Runs the production-compiled Express server (`node dist/server.cjs`) |
+| `npm run dev` | Starts full-stack dev server with Express & Vite middleware on port 3000 |
+| `npm run build` | Builds the production Vite frontend bundle into `dist/` |
+| `npm run start` | Runs the production Express server (`node server.ts`) serving `dist/` & `/api/*` |
 | `npm run lint` | Runs TypeScript type checking (`tsc --noEmit`) |
-| `npm run preview`| Previews the Vite production build locally |
+| `npm run preview` | Previews the Vite production build locally |
+
+---
+
+## 🚀 Deploy from GitHub to Vercel or Netlify
+
+### Option A: Vercel (Recommended)
+1. Push your repository to GitHub.
+2. Import the repository at [vercel.com/new](https://vercel.com/new).
+3. Vercel automatically detects `vercel.json`:
+   - **Build Command:** `npm run build`
+   - **Output Directory:** `dist`
+   - **API Routes:** `/api/*` and `/health*` are routed to `api/index.ts`.
+4. Click **Deploy**.
+
+### Option B: Netlify
+1. Push your repository to GitHub.
+2. Create a new site from Git at [app.netlify.com](https://app.netlify.com).
+3. Netlify automatically detects `netlify.toml`:
+   - **Build Command:** `npm run build`
+   - **Publish Directory:** `dist`
+   - **Functions Directory:** `netlify/functions` (`/api/*` proxies to `netlify/functions/api.ts`).
+4. Click **Deploy site**.
+
+> **Note on Android TWA (`twa-manifest.json`):** After deploying live, replace the placeholder host URLs in `twa-manifest.json` with your custom Vercel or Netlify domain before running `bubblewrap`.
 
 ---
 

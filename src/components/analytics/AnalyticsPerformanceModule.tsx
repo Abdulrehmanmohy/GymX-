@@ -43,6 +43,17 @@ export const AnalyticsPerformanceModule: React.FC<AnalyticsPerformanceModuleProp
 
   const handleExport = () => {
     sounds.playCheckInSuccess();
+    const headers = 'Day,Session,Volume,TimeRange,RecoveryPercent\n';
+    const rows = daysData
+      .map((d) => `"${d.day}","${d.sessionName}","${d.volume}","${timeRange}","88%"`)
+      .join('\n');
+    const blob = new Blob([headers + rows], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `GymX-Performance-Telemetry-${timeRange}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
     setDownloadSuccess(true);
     setTimeout(() => setDownloadSuccess(false), 2400);
   };
@@ -127,7 +138,7 @@ export const AnalyticsPerformanceModule: React.FC<AnalyticsPerformanceModuleProp
               />
               {/* Secondary Buffer Gauge */}
               <circle
-                className="text-red-950"
+                className="text-emerald-950"
                 cx="70"
                 cy="70"
                 fill="transparent"
@@ -138,9 +149,9 @@ export const AnalyticsPerformanceModule: React.FC<AnalyticsPerformanceModuleProp
                 strokeLinecap="round"
                 strokeWidth="9"
               />
-              {/* Primary Red Recovery Arc (88%) */}
+              {/* Primary Recovery Arc (88%) */}
               <circle
-                className="text-red-600 ring-glow"
+                className="text-emerald-500 ring-glow"
                 cx="70"
                 cy="70"
                 fill="transparent"
@@ -258,7 +269,7 @@ export const AnalyticsPerformanceModule: React.FC<AnalyticsPerformanceModuleProp
                   <div
                     className={`w-full rounded-t-sm transition-all duration-200 origin-bottom ${
                       d.isPeak
-                        ? 'bg-emerald-500 shadow-[0_0_16px_rgba(16, 185, 129,0.6)]'
+                        ? 'bg-emerald-500 shadow-[0_0_16px_rgba(16,185,129,0.6)]'
                         : isSelected
                         ? 'bg-emerald-500'
                         : 'bg-zinc-800 hover:bg-zinc-700'

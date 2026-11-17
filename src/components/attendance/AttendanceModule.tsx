@@ -174,7 +174,7 @@ export const AttendanceModule: React.FC<AttendanceModuleProps> = ({
 
       {/* Top Main Navigation Tabs: Desk Register vs Member Digital Card */}
       <div
-        className={`p-1 rounded-2xl border flex items-center gap-1 ${
+        className={`p-1 rounded-2xl border grid grid-cols-2 gap-1 ${
           isDark ? 'bg-zinc-900/90 border-zinc-800' : 'bg-zinc-100 border-zinc-200'
         }`}
       >
@@ -184,14 +184,14 @@ export const AttendanceModule: React.FC<AttendanceModuleProps> = ({
             sounds.playClick();
             setActiveTab('desk');
           }}
-          className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+          className={`py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer whitespace-nowrap ${
             activeTab === 'desk'
-              ? 'bg-emerald-500 text-white shadow-md font-extrabold'
+              ? 'bg-emerald-500 text-black shadow-md font-extrabold'
               : 'text-zinc-400 hover:text-white'
           }`}
         >
-          <Users className="w-4 h-4" />
-          <span>Front Desk Register (Daily Attendance)</span>
+          <Users className="w-4 h-4 shrink-0" />
+          <span>Front Desk</span>
         </button>
 
         <button
@@ -200,14 +200,14 @@ export const AttendanceModule: React.FC<AttendanceModuleProps> = ({
             sounds.playClick();
             setActiveTab('card');
           }}
-          className={`py-2.5 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+          className={`py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer whitespace-nowrap ${
             activeTab === 'card'
-              ? 'bg-emerald-500 text-white shadow-md font-extrabold'
+              ? 'bg-emerald-500 text-black shadow-md font-extrabold'
               : 'text-zinc-400 hover:text-white'
           }`}
         >
-          <CreditCard className="w-4 h-4" />
-          <span>Member ID Card</span>
+          <CreditCard className="w-4 h-4 shrink-0" />
+          <span>My ID Card</span>
         </button>
       </div>
 
@@ -440,7 +440,7 @@ export const AttendanceModule: React.FC<AttendanceModuleProps> = ({
                         isPresent
                           ? isDark
                             ? 'bg-zinc-900/25 hover:bg-zinc-900/50'
-                            : 'bg-red-50/20 hover:bg-red-50/40'
+                            : 'bg-emerald-50/40 hover:bg-emerald-50/70'
                           : isDark
                           ? 'hover:bg-zinc-900/40'
                           : 'hover:bg-zinc-50'

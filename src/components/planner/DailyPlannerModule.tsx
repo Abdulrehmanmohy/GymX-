@@ -460,7 +460,7 @@ export const DailyPlannerModule: React.FC<DailyPlannerModuleProps> = ({
                       ? 'bg-emerald-500 text-black border-emerald-400 font-extrabold shadow-lg shadow-emerald-500/25 scale-[1.02]'
                       : day.isToday
                       ? 'bg-zinc-800/90 border-emerald-500/60 text-white ring-1 ring-emerald-500/40'
-                      : 'bg-zinc-950/70 border-zinc-800 text-zinc-300 hover:border-zinc-700 hover:bg-zinc-850'
+                      : 'bg-zinc-950/70 border-zinc-800 text-zinc-300 hover:border-zinc-700 hover:bg-zinc-800'
                   }`}
                 >
                   {/* Today top marker */}
@@ -610,7 +610,7 @@ export const DailyPlannerModule: React.FC<DailyPlannerModuleProps> = ({
             <div className="flex items-center gap-2">
               <h3 className="text-sm font-extrabold text-white">{selectedDateFormatted}</h3>
               {selectedDate === todayIso && (
-                <span className="px-1.5 py-0.2 rounded text-[9px] font-mono font-black bg-emerald-500 text-black">
+                <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-black bg-emerald-500 text-black">
                   TODAY
                 </span>
               )}
@@ -838,7 +838,7 @@ export const DailyPlannerModule: React.FC<DailyPlannerModuleProps> = ({
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <span className="font-bold text-xs text-zinc-200">{notif.title}</span>
-                  <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-1.5 py-0.2 rounded border border-emerald-500/20">
+                  <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
                     {notif.time}
                   </span>
                 </div>
@@ -925,7 +925,7 @@ export const DailyPlannerModule: React.FC<DailyPlannerModuleProps> = ({
                         else if (preset.includes('Mobility')) setNewTaskType('stretch');
                         else setNewTaskType('workout');
                       }}
-                      className="px-2 py-0.5 rounded-md bg-zinc-850 hover:bg-zinc-800 text-[10px] text-zinc-300 border border-zinc-750"
+                      className="px-2 py-0.5 rounded-md bg-zinc-900 hover:bg-zinc-800 text-[10px] text-zinc-300 border border-zinc-700"
                     >
                       {preset}
                     </button>

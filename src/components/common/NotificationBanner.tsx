@@ -6,7 +6,7 @@ export interface PushNotificationPayload {
   id: string;
   title: string;
   body: string;
-  category?: 'workout' | 'nutrition' | 'water' | 'recovery';
+  category?: 'workout' | 'nutrition' | 'water' | 'recovery' | 'system';
 }
 
 interface NotificationBannerProps {

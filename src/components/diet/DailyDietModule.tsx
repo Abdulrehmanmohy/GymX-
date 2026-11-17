@@ -325,7 +325,7 @@ export const DailyDietModule: React.FC<DailyDietModuleProps> = ({
                         <div className="flex items-center gap-1.5">
                           <h4 className="font-bold text-xs truncate text-zinc-100">{meal.name}</h4>
                           {meal.source === 'ai_scanner' && (
-                            <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30 flex items-center gap-0.5">
+                            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30 flex items-center gap-0.5">
                               <Sparkles className="w-2.5 h-2.5" /> Smart Scan
                             </span>
                           )}
@@ -397,7 +397,7 @@ export const DailyDietModule: React.FC<DailyDietModuleProps> = ({
                   value={newMealName}
                   onChange={(e) => setNewMealName(e.target.value)}
                   placeholder="e.g. Grilled Chicken & White Rice"
-                  className="w-full px-3 py-2 rounded-xl bg-zinc-850 border border-zinc-700 text-xs text-white focus:ring-2 focus:ring-emerald-500 outline-none"
+                  className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-700 text-xs text-white focus:ring-2 focus:ring-emerald-500 outline-none"
                 />
               </div>
 
@@ -409,7 +409,7 @@ export const DailyDietModule: React.FC<DailyDietModuleProps> = ({
                     min="0"
                     value={newCalories}
                     onChange={(e) => setNewCalories(Number(e.target.value))}
-                    className="w-full px-3 py-2 rounded-xl bg-zinc-850 border border-zinc-700 text-xs text-white outline-none font-mono"
+                    className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-700 text-xs text-white outline-none font-mono"
                   />
                 </div>
                 <div>
@@ -419,7 +419,7 @@ export const DailyDietModule: React.FC<DailyDietModuleProps> = ({
                     min="0"
                     value={newProtein}
                     onChange={(e) => setNewProtein(Number(e.target.value))}
-                    className="w-full px-3 py-2 rounded-xl bg-zinc-850 border border-zinc-700 text-xs text-white outline-none font-mono"
+                    className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-700 text-xs text-white outline-none font-mono"
                   />
                 </div>
               </div>
@@ -432,7 +432,7 @@ export const DailyDietModule: React.FC<DailyDietModuleProps> = ({
                     min="0"
                     value={newCarbs}
                     onChange={(e) => setNewCarbs(Number(e.target.value))}
-                    className="w-full px-3 py-2 rounded-xl bg-zinc-850 border border-zinc-700 text-xs text-white outline-none font-mono"
+                    className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-700 text-xs text-white outline-none font-mono"
                   />
                 </div>
                 <div>
@@ -442,7 +442,7 @@ export const DailyDietModule: React.FC<DailyDietModuleProps> = ({
                     min="0"
                     value={newFat}
                     onChange={(e) => setNewFat(Number(e.target.value))}
-                    className="w-full px-3 py-2 rounded-xl bg-zinc-850 border border-zinc-700 text-xs text-white outline-none font-mono"
+                    className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-700 text-xs text-white outline-none font-mono"
                   />
                 </div>
               </div>

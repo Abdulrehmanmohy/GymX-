@@ -119,7 +119,7 @@ export const CustomRoutineBuilderModal: React.FC<CustomRoutineBuilderModalProps>
               placeholder="e.g. Upper Body Hypertrophy Blitz"
               className={`w-full px-3.5 py-2.5 rounded-xl border text-xs transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
                 isDark
-                  ? 'bg-zinc-850 border-zinc-700 text-white placeholder-zinc-500'
+                  ? 'bg-zinc-900 border-zinc-700 text-white placeholder-zinc-500'
                   : 'bg-zinc-50 border-zinc-300 text-zinc-900 placeholder-zinc-400'
               }`}
             />
@@ -138,7 +138,7 @@ export const CustomRoutineBuilderModal: React.FC<CustomRoutineBuilderModalProps>
                 placeholder="e.g. Chest & Triceps"
                 className={`w-full px-3 py-2 rounded-xl border text-xs transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
                   isDark
-                    ? 'bg-zinc-850 border-zinc-700 text-white placeholder-zinc-500'
+                    ? 'bg-zinc-900 border-zinc-700 text-white placeholder-zinc-500'
                     : 'bg-zinc-50 border-zinc-300 text-zinc-900 placeholder-zinc-400'
                 }`}
               />
@@ -155,7 +155,7 @@ export const CustomRoutineBuilderModal: React.FC<CustomRoutineBuilderModalProps>
                 onChange={(e) => setDurationMin(Number(e.target.value))}
                 className={`w-full px-3 py-2 rounded-xl border text-xs transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
                   isDark
-                    ? 'bg-zinc-850 border-zinc-700 text-white'
+                    ? 'bg-zinc-900 border-zinc-700 text-white'
                     : 'bg-zinc-50 border-zinc-300 text-zinc-900'
                 }`}
               />

@@ -1,4 +1,4 @@
-import { Exercise, WorkoutRoutine, ScheduledTask, SmartNotification, GymMember, AttendanceRecord, MealEntry } from '../types/gym';
+import type { Exercise, WorkoutRoutine, ScheduledTask, SmartNotification, GymMember, AttendanceRecord, MealEntry } from '../types/gym';
 
 export const EXERCISE_LIBRARY: Exercise[] = [
   {

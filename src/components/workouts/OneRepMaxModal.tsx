@@ -160,7 +160,7 @@ export const OneRepMaxModal: React.FC<OneRepMaxModalProps> = ({
           </div>
 
           {/* ESTIMATED 1RM HERO BANNER */}
-          <div className="p-4 rounded-2xl bg-gradient-to-r from-red-950 via-zinc-950 to-zinc-900 border-2 border-emerald-500/80 shadow-xl shadow-emerald-950/40 text-center space-y-1">
+          <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-950 via-zinc-950 to-zinc-900 border-2 border-emerald-500/80 shadow-xl shadow-emerald-950/40 text-center space-y-1">
             <span className="text-[10px] font-mono font-black text-emerald-400 uppercase tracking-widest">
               THEORETICAL ONE REP MAXIMUM (1RM)
             </span>

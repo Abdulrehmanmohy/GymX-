@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from 'react';
-import { Exercise, WorkoutRoutine, MuscleGroup, DifficultyLevel, EquipmentType, ThemeMode } from '../../types/gym';
+import React, { useState, useMemo, useEffect } from 'react';
+import { Exercise, WorkoutRoutine, ThemeMode } from '../../types/gym';
 import {
   Search,
   Filter,
@@ -60,6 +60,11 @@ export const WorkoutsModule: React.FC<WorkoutsModuleProps> = ({
   const [activeSubTab, setActiveSubTab] = useState<'programs' | 'exercises' | 'solvers' | 'analytics'>(
     initialSubTab || 'programs'
   );
+  useEffect(() => {
+    if (initialSubTab) {
+      setActiveSubTab(initialSubTab);
+    }
+  }, [initialSubTab]);
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [selectedMuscle, setSelectedMuscle] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
@@ -89,15 +94,51 @@ export const WorkoutsModule: React.FC<WorkoutsModuleProps> = ({
 
   // Filtered exercises
   const filteredExercises = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
     return exerciseLibrary.filter((ex) => {
       const matchesSearch =
-        ex.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        ex.primaryMuscle.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        ex.equipment.toLowerCase().includes(searchQuery.toLowerCase());
+        !q ||
+        ex.name.toLowerCase().includes(q) ||
+        ex.primaryMuscle.toLowerCase().includes(q) ||
+        ex.equipment.toLowerCase().includes(q);
       const matchesMuscle = selectedMuscle === 'All' || ex.muscleGroup === selectedMuscle;
       return matchesSearch && matchesMuscle;
     });
   }, [exerciseLibrary, searchQuery, selectedMuscle]);
+
+  // Filtered routines
+  const filteredRoutines = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    return routines.filter((routine) => {
+      const matchesSearch =
+        !q ||
+        routine.name.toLowerCase().includes(q) ||
+        routine.description.toLowerCase().includes(q) ||
+        routine.focus.toLowerCase().includes(q) ||
+        routine.difficulty.toLowerCase().includes(q);
+
+      if (!matchesSearch) return false;
+      if (selectedCategory === 'All') return true;
+
+      const haystack = `${routine.name} ${routine.focus} ${routine.description} ${routine.difficulty}`.toLowerCase();
+      if (selectedCategory === 'Heavy Strength') {
+        return haystack.includes('strength') || haystack.includes('power') || haystack.includes('heavy') || routine.difficulty === 'Advanced';
+      }
+      if (selectedCategory === 'HIIT Shred') {
+        return haystack.includes('hiit') || haystack.includes('conditioning') || haystack.includes('shred') || haystack.includes('cardio') || haystack.includes('metabolic');
+      }
+      if (selectedCategory === 'Mobility & Recovery') {
+        return haystack.includes('mobility') || haystack.includes('recovery') || haystack.includes('core') || haystack.includes('stretch');
+      }
+      if (selectedCategory === 'Hypertrophy') {
+        return haystack.includes('hypertrophy') || haystack.includes('volume') || haystack.includes('muscle') || haystack.includes('push') || haystack.includes('pull');
+      }
+      if (selectedCategory === 'Bodyweight') {
+        return haystack.includes('bodyweight') || haystack.includes('calisthenics') || haystack.includes('core');
+      }
+      return true;
+    });
+  }, [routines, searchQuery, selectedCategory]);
 
   const categories = ['All', 'Heavy Strength', 'HIIT Shred', 'Mobility & Recovery', 'Hypertrophy', 'Bodyweight'];
 
@@ -154,47 +195,47 @@ export const WorkoutsModule: React.FC<WorkoutsModuleProps> = ({
       </section>
 
       {/* Sub-tab Navigation (Programs vs Exercise Library vs Problem Solvers) */}
-      <div className="p-1 rounded-2xl border border-zinc-800 bg-zinc-950 flex items-center gap-1 shadow-md">
+      <div className="p-1 rounded-2xl border border-zinc-800 bg-zinc-950 grid grid-cols-4 gap-1 shadow-md">
         <button
           onClick={() => {
             sounds.playClick();
             setActiveSubTab('programs');
           }}
-          className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+          className={`py-2 px-1 rounded-xl text-[11px] sm:text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1 whitespace-nowrap ${
             activeSubTab === 'programs'
               ? 'bg-emerald-500 text-black font-black shadow-md shadow-emerald-950/50'
               : 'text-zinc-400 hover:text-white'
           }`}
         >
-          <Dumbbell className="w-4 h-4" />
-          <span>Workouts ({routines.length})</span>
+          <Dumbbell className="w-3.5 h-3.5 shrink-0" />
+          <span>Workouts</span>
         </button>
         <button
           onClick={() => {
             sounds.playClick();
             setActiveSubTab('exercises');
           }}
-          className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+          className={`py-2 px-1 rounded-xl text-[11px] sm:text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1 whitespace-nowrap ${
             activeSubTab === 'exercises'
               ? 'bg-emerald-500 text-black font-black shadow-md shadow-emerald-950/50'
               : 'text-zinc-400 hover:text-white'
           }`}
         >
-          <Video className="w-4 h-4" />
-          <span>Videos ({exerciseLibrary.length})</span>
+          <Video className="w-3.5 h-3.5 shrink-0" />
+          <span>Videos</span>
         </button>
         <button
           onClick={() => {
             sounds.playClick();
             setActiveSubTab('solvers');
           }}
-          className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1 ${
+          className={`py-2 px-1 rounded-xl text-[11px] sm:text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1 whitespace-nowrap ${
             activeSubTab === 'solvers'
               ? 'bg-emerald-500 text-black font-black shadow-md shadow-emerald-950/50'
               : 'text-zinc-400 hover:text-white'
           }`}
         >
-          <Zap className="w-3.5 h-3.5 fill-current" />
+          <Zap className="w-3.5 h-3.5 fill-current shrink-0" />
           <span>Tools</span>
         </button>
         <button
@@ -202,14 +243,14 @@ export const WorkoutsModule: React.FC<WorkoutsModuleProps> = ({
             sounds.playClick();
             setActiveSubTab('analytics');
           }}
-          className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1 ${
+          className={`py-2 px-1 rounded-xl text-[11px] sm:text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1 whitespace-nowrap ${
             activeSubTab === 'analytics'
               ? 'bg-emerald-500 text-black font-black shadow-md shadow-emerald-950/50'
               : 'text-zinc-400 hover:text-white'
           }`}
         >
-          <BarChart3 className="w-3.5 h-3.5" />
-          <span>Analytics</span>
+          <BarChart3 className="w-3.5 h-3.5 shrink-0" />
+          <span>Stats</span>
         </button>
       </div>
 
@@ -270,6 +311,7 @@ export const WorkoutsModule: React.FC<WorkoutsModuleProps> = ({
               <div className="flex items-center gap-2 relative z-10">
                 <button
                   onClick={() => {
+                    if (!routines[0]) return;
                     sounds.playCheckInSuccess();
                     setActiveRoutine(routines[0]);
                   }}
@@ -331,57 +373,73 @@ export const WorkoutsModule: React.FC<WorkoutsModuleProps> = ({
                 CURATED WORKOUT CATALOG
               </span>
               <span className="font-label-caps text-[10px] text-zinc-400">
-                {routines.length} AVAILABLE
+                {filteredRoutines.length} AVAILABLE
               </span>
             </div>
 
-            <div className="flex flex-col gap-2.5">
-              {routines.map((routine) => (
-                <div
-                  key={routine.id}
-                  className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4 hover:border-emerald-500/60 transition-all duration-200"
+            {filteredRoutines.length === 0 ? (
+              <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-6 text-center space-y-2">
+                <p className="text-xs font-bold text-zinc-300">No routines match your filter</p>
+                <button
+                  onClick={() => {
+                    sounds.playClick();
+                    setSelectedCategory('All');
+                    setSearchQuery('');
+                  }}
+                  className="px-3 py-1.5 rounded-xl bg-emerald-500 text-black text-xs font-bold cursor-pointer"
                 >
-                  <div className="flex items-start justify-between gap-2 mb-2">
-                    <div className="flex flex-col">
-                      <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-400 uppercase tracking-wider mb-1 font-mono">
-                        <Flame className="w-3 h-3 text-emerald-400 fill-emerald-400/20" />
-                        {routine.difficulty} • {routine.focus.split(',')[0]}
-                      </span>
-                      <h3 className="font-display text-base font-bold text-white leading-snug">
-                        {routine.name}
-                      </h3>
-                      <p className="text-xs text-zinc-400 mt-0.5 line-clamp-1">{routine.description}</p>
+                  Reset Filters
+                </button>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-2.5">
+                {filteredRoutines.map((routine) => (
+                  <div
+                    key={routine.id}
+                    className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4 hover:border-emerald-500/60 transition-all duration-200"
+                  >
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <div className="flex flex-col">
+                        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-400 uppercase tracking-wider mb-1 font-mono">
+                          <Flame className="w-3 h-3 text-emerald-400 fill-emerald-400/20" />
+                          {routine.difficulty} • {routine.focus.split(',')[0]}
+                        </span>
+                        <h3 className="font-display text-base font-bold text-white leading-snug">
+                          {routine.name}
+                        </h3>
+                        <p className="text-xs text-zinc-400 mt-0.5 line-clamp-1">{routine.description}</p>
+                      </div>
+
+                      <button
+                        onClick={() => {
+                          sounds.playCheckInSuccess();
+                          setActiveRoutine(routine);
+                        }}
+                        className="w-10 h-10 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white flex items-center justify-center shadow-md shadow-emerald-950/50 active:scale-90 transition-all shrink-0 cursor-pointer"
+                        title="Start Workout"
+                      >
+                        <Play className="w-4 h-4 fill-white" />
+                      </button>
                     </div>
 
-                    <button
-                      onClick={() => {
-                        sounds.playCheckInSuccess();
-                        setActiveRoutine(routine);
-                      }}
-                      className="w-10 h-10 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white flex items-center justify-center shadow-md shadow-emerald-950/50 active:scale-90 transition-all shrink-0 cursor-pointer"
-                      title="Start Workout"
-                    >
-                      <Play className="w-4 h-4 fill-white" />
-                    </button>
+                    {/* Metrics Pill HUD */}
+                    <div className="flex flex-wrap items-center gap-3 pt-2 border-t border-zinc-800/80 text-xs font-mono text-zinc-400">
+                      <span className="flex items-center gap-1 text-white">
+                        <Clock className="w-3.5 h-3.5 text-zinc-400" />
+                        {routine.durationMin} min
+                      </span>
+                      <span className="flex items-center gap-1 text-white">
+                        <Flame className="w-3.5 h-3.5 text-emerald-400" />
+                        {routine.exercises.length * 90} kcal
+                      </span>
+                      <span className="px-2 py-0.5 rounded bg-black text-zinc-300 text-[10px] font-bold">
+                        {routine.exercises.length} Exercises
+                      </span>
+                    </div>
                   </div>
-
-                  {/* Metrics Pill HUD */}
-                  <div className="flex flex-wrap items-center gap-3 pt-2 border-t border-zinc-800/80 text-xs font-mono text-zinc-400">
-                    <span className="flex items-center gap-1 text-white">
-                      <Clock className="w-3.5 h-3.5 text-zinc-400" />
-                      {routine.durationMin} min
-                    </span>
-                    <span className="flex items-center gap-1 text-white">
-                      <Flame className="w-3.5 h-3.5 text-emerald-400" />
-                      {routine.exercises.length * 90} kcal
-                    </span>
-                    <span className="px-2 py-0.5 rounded bg-black text-zinc-300 text-[10px] font-bold">
-                      {routine.exercises.length} Exercises
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </section>
         </div>
       )}

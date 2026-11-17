@@ -83,7 +83,7 @@ export const ExerciseVideoPlayer: React.FC<ExerciseVideoPlayerProps> = ({
           showTelemetry={false}
           className="w-full h-full"
         />
-        <div className="absolute bottom-1 right-1 px-1 py-0.2 rounded bg-black/90 text-[8px] font-mono text-emerald-400 font-bold border border-emerald-500/30">
+        <div className="absolute bottom-1 right-1 px-1 py-0.5 rounded bg-black/90 text-[8px] font-mono text-emerald-400 font-bold border border-emerald-500/30">
           LOOP
         </div>
       </div>

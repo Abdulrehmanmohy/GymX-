@@ -24,9 +24,12 @@ export const AnimatedExerciseCanvas: React.FC<AnimatedExerciseCanvasProps> = ({
   const [repCount, setRepCount] = useState<number>(0);
   const animFrameRef = useRef<number | null>(null);
   const lastTimeRef = useRef<number>(performance.now());
+  const progressRef = useRef<number>(0);
   const repCountRef = useRef<number>(0);
+  const onRepCompleteRef = useRef(onRepComplete);
+  onRepCompleteRef.current = onRepComplete;
 
-  // Determine cycle duration in seconds: slow-mo is 4.5s, normal is 2.8s
+  // Determine cycle duration in seconds: slow-mo is 4.5s, normal is 2.6s
   const cycleDurationMs = (isSlowMotion ? 4.5 : 2.6) * 1000;
 
   useEffect(() => {
@@ -38,19 +41,18 @@ export const AnimatedExerciseCanvas: React.FC<AnimatedExerciseCanvasProps> = ({
     lastTimeRef.current = performance.now();
 
     const loop = (now: number) => {
-      const delta = now - lastTimeRef.current;
+      const delta = Math.min(100, now - lastTimeRef.current);
       lastTimeRef.current = now;
 
-      setCycleProgress((prev) => {
-        const next = prev + delta / cycleDurationMs;
-        if (next >= 1) {
-          repCountRef.current += 1;
-          setRepCount(repCountRef.current);
-          if (onRepComplete) onRepComplete(repCountRef.current);
-          return next % 1;
-        }
-        return next;
-      });
+      let next = progressRef.current + delta / cycleDurationMs;
+      if (next >= 1) {
+        repCountRef.current += 1;
+        setRepCount(repCountRef.current);
+        onRepCompleteRef.current?.(repCountRef.current);
+        next = next % 1;
+      }
+      progressRef.current = next;
+      setCycleProgress(next);
 
       animFrameRef.current = requestAnimationFrame(loop);
     };
@@ -60,7 +62,7 @@ export const AnimatedExerciseCanvas: React.FC<AnimatedExerciseCanvasProps> = ({
     return () => {
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
     };
-  }, [isPlaying, isSlowMotion, cycleDurationMs, onRepComplete]);
+  }, [isPlaying, cycleDurationMs]);
 
   // Phase computation:
   let phaseName = 'Eccentric (Lowering)';
