@@ -36,10 +36,13 @@ export const InstallAppModal: React.FC<InstallAppModalProps> = ({
   const [copied, setCopied] = useState(false);
   const [installAttempted, setInstallAttempted] = useState(false);
 
-  const appUrl =
+  const rawOrigin =
     typeof window !== 'undefined' && window.location?.origin
       ? window.location.origin
       : 'https://gymx.app';
+  const appUrl = rawOrigin.includes('ais-dev-')
+    ? rawOrigin.replace('ais-dev-', 'ais-pre-')
+    : rawOrigin;
 
   const pwaBuilderUrl = `https://www.pwabuilder.com/reportcard?site=${encodeURIComponent(appUrl)}`;
 

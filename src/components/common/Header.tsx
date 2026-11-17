@@ -11,6 +11,7 @@ interface HeaderProps {
   currentStreak: number;
   onOpenSettings?: () => void;
   onOpenInstall?: () => void;
+  canDirectInstall?: boolean;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -19,6 +20,7 @@ export const Header: React.FC<HeaderProps> = ({
   currentStreak,
   onOpenSettings,
   onOpenInstall,
+  canDirectInstall,
 }) => {
   const handleRoleSwitch = () => {
     sounds.playClick();
@@ -53,7 +55,7 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       </div>
 
-      {/* Trailing Controls: Install APK, Streak, Role Toggle, Settings */}
+      {/* Trailing Controls: Install App, Streak, Role Toggle, Settings */}
       <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
         {onOpenInstall && (
           <button
@@ -61,11 +63,15 @@ export const Header: React.FC<HeaderProps> = ({
               sounds.playClick();
               onOpenInstall();
             }}
-            className="px-2.5 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 border border-emerald-500/40 text-[11px] font-bold flex items-center gap-1 active:scale-95 transition-all cursor-pointer"
-            title="Install GymX App / Download APK on Phone"
+            className={`px-2.5 py-1.5 rounded-xl text-[11px] font-black flex items-center gap-1 active:scale-95 transition-all cursor-pointer ${
+              canDirectInstall
+                ? 'bg-emerald-500 text-black shadow-md shadow-emerald-950/50'
+                : 'bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 border border-emerald-500/40'
+            }`}
+            title="Install GymX App on Phone"
           >
             <Smartphone className="w-3.5 h-3.5 shrink-0" />
-            <span>Install APK</span>
+            <span>{canDirectInstall ? 'Install' : 'Install App'}</span>
           </button>
         )}
 

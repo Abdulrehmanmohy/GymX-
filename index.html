@@ -32,6 +32,14 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     <script>
+      // Capture Chrome beforeinstallprompt early so 1-tap install works immediately
+      window.__deferredInstallPrompt = null;
+      window.addEventListener('beforeinstallprompt', function (e) {
+        e.preventDefault();
+        window.__deferredInstallPrompt = e;
+        window.dispatchEvent(new CustomEvent('gymx-install-ready'));
+      });
+
       // Clear legacy caches so updates show up immediately without stale cache lock
       if ('caches' in window) {
         caches.keys().then((names) => {
