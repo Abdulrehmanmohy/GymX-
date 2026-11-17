@@ -2,7 +2,7 @@ import React from 'react';
 import { WorkoutRoutine, ScheduledTask, ThemeMode } from '../../types/gym';
 import { sounds } from '../../utils/audio';
 import { getLocalDateStr } from '../../utils/date';
-import { Zap, Dumbbell, Timer, Flame, Play, Disc, Shield, Calculator, Droplets, Check, Square, Smartphone } from 'lucide-react';
+import { Zap, Dumbbell, Timer, Flame, Play, Disc, Shield, Calculator, Droplets, Check, Square } from 'lucide-react';
 
 interface TodayWorkoutHubProps {
   routine?: WorkoutRoutine;
@@ -17,7 +17,6 @@ interface TodayWorkoutHubProps {
   onOpenWarmupModal: () => void;
   onAddWater: (deltaMl: number) => void;
   onToggleTaskComplete: (taskId: string) => void;
-  onOpenInstall?: () => void;
 }
 
 export const TodayWorkoutHub: React.FC<TodayWorkoutHubProps> = ({
@@ -32,7 +31,6 @@ export const TodayWorkoutHub: React.FC<TodayWorkoutHubProps> = ({
   onOpenWarmupModal,
   onAddWater,
   onToggleTaskComplete,
-  onOpenInstall,
 }) => {
   const waterPercent = Math.min(100, Math.round((waterIntakeMl / Math.max(1, waterTargetMl)) * 100));
 
@@ -67,39 +65,6 @@ export const TodayWorkoutHub: React.FC<TodayWorkoutHubProps> = ({
           </div>
         </div>
       </section>
-
-      {/* PHONE INSTALL / APK DOWNLOAD CARD */}
-      {onOpenInstall && (
-        <button
-          onClick={() => {
-            sounds.playClick();
-            onOpenInstall();
-          }}
-          className="w-full p-3.5 rounded-2xl bg-gradient-to-r from-emerald-950/90 via-zinc-900 to-zinc-900 border border-emerald-500/40 hover:border-emerald-400/70 flex items-center justify-between gap-3 active:scale-[0.99] transition-all cursor-pointer shadow-lg text-left"
-        >
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shrink-0">
-              <Smartphone className="w-5 h-5" />
-            </div>
-            <div className="min-w-0">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-black text-white truncate">
-                  Install GymX on Android
-                </span>
-                <span className="px-1.5 py-0.5 rounded bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-mono text-[9px] font-bold shrink-0">
-                  APK READY
-                </span>
-              </div>
-              <p className="text-[11px] text-zinc-400 truncate mt-0.5">
-                1-Tap Install, Scan QR, or Download .APK file
-              </p>
-            </div>
-          </div>
-          <span className="px-3 py-1.5 rounded-xl bg-emerald-500 text-black font-display font-black text-[11px] shrink-0">
-            Get APK →
-          </span>
-        </button>
-      )}
 
       {/* EASY-TO-USE HERO START WORKOUT CARD */}
       {routine && (

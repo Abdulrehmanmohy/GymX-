@@ -1,6 +1,6 @@
 import React from 'react';
 import { ThemeMode, UserRole } from '../../types/gym';
-import { Shield, User, Settings, Smartphone } from 'lucide-react';
+import { Shield, User, Settings } from 'lucide-react';
 import { sounds } from '../../utils/audio';
 
 interface HeaderProps {
@@ -10,8 +10,6 @@ interface HeaderProps {
   onToggleRole: () => void;
   currentStreak: number;
   onOpenSettings?: () => void;
-  onOpenInstall?: () => void;
-  canDirectInstall?: boolean;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -19,8 +17,6 @@ export const Header: React.FC<HeaderProps> = ({
   onToggleRole,
   currentStreak,
   onOpenSettings,
-  onOpenInstall,
-  canDirectInstall,
 }) => {
   const handleRoleSwitch = () => {
     sounds.playClick();
@@ -30,10 +26,10 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <header
       id="app-header"
-      className="sticky top-0 z-40 flex justify-between items-center w-full px-3 sm:px-4 h-14 max-w-4xl mx-auto bg-black/95 backdrop-blur-md border-b border-zinc-800/80"
+      className="sticky top-0 z-40 flex justify-between items-center w-full px-4 h-14 max-w-4xl mx-auto bg-black/95 backdrop-blur-md border-b border-zinc-800/80"
     >
       {/* Leading: Athlete Avatar & Brand */}
-      <div className="flex items-center space-x-2 min-w-0">
+      <div className="flex items-center space-x-2.5 min-w-0">
         <div className="relative w-8 h-8 rounded-full ring-2 ring-emerald-500/50 overflow-hidden bg-zinc-900 flex items-center justify-center shrink-0">
           <img
             src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80"
@@ -55,28 +51,10 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       </div>
 
-      {/* Trailing Controls: Install App, Streak, Role Toggle, Settings */}
-      <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
-        {onOpenInstall && (
-          <button
-            onClick={() => {
-              sounds.playClick();
-              onOpenInstall();
-            }}
-            className={`px-2.5 py-1.5 rounded-xl text-[11px] font-black flex items-center gap-1 active:scale-95 transition-all cursor-pointer ${
-              canDirectInstall
-                ? 'bg-emerald-500 text-black shadow-md shadow-emerald-950/50'
-                : 'bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 border border-emerald-500/40'
-            }`}
-            title="Install GymX App on Phone"
-          >
-            <Smartphone className="w-3.5 h-3.5 shrink-0" />
-            <span>{canDirectInstall ? 'Install' : 'Install App'}</span>
-          </button>
-        )}
-
+      {/* Trailing Controls: Streak, Role Toggle, Settings */}
+      <div className="flex items-center space-x-2 shrink-0">
         {/* Streak Pill */}
-        <div className="hidden xs:flex sm:flex items-center gap-1 px-2 py-1 rounded-full bg-zinc-900 border border-zinc-800">
+        <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-zinc-900 border border-zinc-800">
           <span className="text-xs leading-none">🔥</span>
           <span className="font-mono font-bold text-[11px] text-white">{currentStreak}d</span>
         </div>

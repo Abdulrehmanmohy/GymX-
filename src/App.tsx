@@ -36,15 +36,9 @@ import { OneRepMaxModal } from './components/workouts/OneRepMaxModal';
 import { WarmUpPyramidModal } from './components/workouts/WarmUpPyramidModal';
 import { THEME_PALETTES, ThemePaletteId } from './utils/themePalettes';
 import { ThemePaletteSelector } from './components/common/ThemePaletteSelector';
-import { InstallAppModal } from './components/common/InstallAppModal';
 import { sounds } from './utils/audio';
 import { getLocalDateStr } from './utils/date';
-import { Camera, Utensils, Smartphone, X } from 'lucide-react';
-
-interface BeforeInstallPromptEvent extends Event {
-  prompt: () => Promise<void>;
-  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
-}
+import { Camera, Utensils } from 'lucide-react';
 
 const STORAGE_KEY = 'gymx_app_state_v1';
 
@@ -95,81 +89,6 @@ export default function App() {
   const [isPlateCalcOpen, setIsPlateCalcOpen] = useState<boolean>(false);
   const [is1RMCalcOpen, setIs1RMCalcOpen] = useState<boolean>(false);
   const [isWarmupOpen, setIsWarmupOpen] = useState<boolean>(false);
-
-  // Temporary Phone Install / APK / QR State
-  const [isInstallModalOpen, setIsInstallModalOpen] = useState<boolean>(false);
-  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
-  const [isStandalone, setIsStandalone] = useState<boolean>(false);
-  const [dismissInstallBanner, setDismissInstallBanner] = useState<boolean>(false);
-
-  useEffect(() => {
-    const win = window as unknown as { __deferredInstallPrompt?: BeforeInstallPromptEvent | null };
-
-    const standalone =
-      window.matchMedia('(display-mode: standalone)').matches ||
-      (window.navigator as unknown as { standalone?: boolean }).standalone === true;
-    setIsStandalone(standalone);
-
-    if (win.__deferredInstallPrompt) {
-      setDeferredPrompt(win.__deferredInstallPrompt);
-    }
-
-    const handleInstallReady = () => {
-      if (win.__deferredInstallPrompt) {
-        setDeferredPrompt(win.__deferredInstallPrompt);
-      }
-    };
-
-    const handleBeforeInstallPrompt = (e: Event) => {
-      e.preventDefault();
-      win.__deferredInstallPrompt = e as BeforeInstallPromptEvent;
-      setDeferredPrompt(e as BeforeInstallPromptEvent);
-    };
-
-    const handleAppInstalled = () => {
-      setIsStandalone(true);
-      win.__deferredInstallPrompt = null;
-      setDeferredPrompt(null);
-      setIsInstallModalOpen(false);
-    };
-
-    window.addEventListener('gymx-install-ready', handleInstallReady);
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-    window.addEventListener('appinstalled', handleAppInstalled);
-    return () => {
-      window.removeEventListener('gymx-install-ready', handleInstallReady);
-      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-      window.removeEventListener('appinstalled', handleAppInstalled);
-    };
-  }, []);
-
-  const handleTriggerNativeInstall = async (): Promise<boolean> => {
-    const win = window as unknown as { __deferredInstallPrompt?: BeforeInstallPromptEvent | null };
-    const promptEvent = deferredPrompt || win.__deferredInstallPrompt;
-    if (!promptEvent) return false;
-    try {
-      await promptEvent.prompt();
-      const choiceResult = await promptEvent.userChoice;
-      if (choiceResult.outcome === 'accepted') {
-        win.__deferredInstallPrompt = null;
-        setDeferredPrompt(null);
-        return true;
-      }
-      return false;
-    } catch {
-      return false;
-    }
-  };
-
-  // Direct 1-tap phone install when Chrome prompt is ready; opens guide/QR/APK modal otherwise
-  const handleInstallClick = async () => {
-    const win = window as unknown as { __deferredInstallPrompt?: BeforeInstallPromptEvent | null };
-    if (deferredPrompt || win.__deferredInstallPrompt) {
-      const accepted = await handleTriggerNativeInstall();
-      if (accepted) return;
-    }
-    setIsInstallModalOpen(true);
-  };
 
   const handleTabChange = (tab: ActiveTab) => {
     setActiveTab(tab);
@@ -654,8 +573,6 @@ export default function App() {
           onToggleRole={handleToggleRole}
           currentStreak={currentMember.currentStreak}
           onOpenSettings={() => setIsPaletteModalOpen(true)}
-          onOpenInstall={handleInstallClick}
-          canDirectInstall={Boolean(deferredPrompt)}
         />
 
         {/* Dynamic Main Module Viewport */}
@@ -715,7 +632,6 @@ export default function App() {
                   onOpenWarmupModal={() => setIsWarmupOpen(true)}
                   onAddWater={handleUpdateWater}
                   onToggleTaskComplete={handleToggleTask}
-                  onOpenInstall={handleInstallClick}
                 />
               ) : (
                 <DailyPlannerModule
@@ -883,66 +799,6 @@ export default function App() {
           isDark={isDark}
           isMuted={isMuted}
           onToggleMuted={handleToggleMuted}
-        />
-
-        {/* Temporary Floating Install Bar above BottomNav */}
-        {!isStandalone && !dismissInstallBanner && (
-          <div className="fixed bottom-18 left-0 right-0 z-40 px-3 pointer-events-none">
-            <div className="max-w-md mx-auto bg-zinc-950/95 backdrop-blur-md border border-emerald-500/50 rounded-2xl p-2.5 shadow-2xl flex items-center justify-between gap-2 pointer-events-auto">
-              <button
-                onClick={() => {
-                  sounds.playClick();
-                  handleInstallClick();
-                }}
-                className="flex items-center gap-2.5 flex-1 min-w-0 text-left cursor-pointer"
-              >
-                <div className="w-9 h-9 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shrink-0">
-                  <Smartphone className="w-4 h-4" />
-                </div>
-                <div className="min-w-0">
-                  <span className="text-xs font-black text-white block truncate">
-                    {deferredPrompt ? 'Install GymX App (1-Tap Ready)' : 'Phone mein App Install karein'}
-                  </span>
-                  <span className="text-[10px] text-emerald-400 font-bold block truncate">
-                    {deferredPrompt
-                      ? 'Click karte hi direct phone mein install hoga!'
-                      : 'Tap karein → Chrome Install, QR ya APK'}
-                  </span>
-                </div>
-              </button>
-
-              <div className="flex items-center gap-1 shrink-0">
-                <button
-                  onClick={() => {
-                    sounds.playClick();
-                    handleInstallClick();
-                  }}
-                  className="px-3 py-1.5 rounded-xl bg-emerald-500 text-black font-display font-black text-[11px] cursor-pointer active:scale-95"
-                >
-                  Install
-                </button>
-                <button
-                  onClick={() => {
-                    sounds.playClick();
-                    setDismissInstallBanner(true);
-                  }}
-                  className="w-7 h-7 rounded-lg flex items-center justify-center text-zinc-400 hover:text-white cursor-pointer"
-                  aria-label="Dismiss install banner"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Phone Install / APK / QR Modal */}
-        <InstallAppModal
-          isOpen={isInstallModalOpen}
-          onClose={() => setIsInstallModalOpen(false)}
-          deferredPrompt={deferredPrompt}
-          onTriggerNativeInstall={handleTriggerNativeInstall}
-          isStandalone={isStandalone}
         />
       </div>
     </div>
