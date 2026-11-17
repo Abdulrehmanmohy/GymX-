@@ -1,6 +1,6 @@
 import React from 'react';
 import { ThemeMode, UserRole } from '../../types/gym';
-import { Shield, User, Settings } from 'lucide-react';
+import { Shield, User, Settings, Smartphone } from 'lucide-react';
 import { sounds } from '../../utils/audio';
 
 interface HeaderProps {
@@ -10,6 +10,7 @@ interface HeaderProps {
   onToggleRole: () => void;
   currentStreak: number;
   onOpenSettings?: () => void;
+  onOpenInstall?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -17,6 +18,7 @@ export const Header: React.FC<HeaderProps> = ({
   onToggleRole,
   currentStreak,
   onOpenSettings,
+  onOpenInstall,
 }) => {
   const handleRoleSwitch = () => {
     sounds.playClick();
@@ -26,10 +28,10 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <header
       id="app-header"
-      className="sticky top-0 z-40 flex justify-between items-center w-full px-4 h-14 max-w-4xl mx-auto bg-black/95 backdrop-blur-md border-b border-zinc-800/80"
+      className="sticky top-0 z-40 flex justify-between items-center w-full px-3 sm:px-4 h-14 max-w-4xl mx-auto bg-black/95 backdrop-blur-md border-b border-zinc-800/80"
     >
       {/* Leading: Athlete Avatar & Brand */}
-      <div className="flex items-center space-x-2.5 min-w-0">
+      <div className="flex items-center space-x-2 min-w-0">
         <div className="relative w-8 h-8 rounded-full ring-2 ring-emerald-500/50 overflow-hidden bg-zinc-900 flex items-center justify-center shrink-0">
           <img
             src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80"
@@ -51,10 +53,24 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       </div>
 
-      {/* Trailing Controls: Streak, Role Toggle, Settings */}
-      <div className="flex items-center space-x-2 shrink-0">
+      {/* Trailing Controls: Install APK, Streak, Role Toggle, Settings */}
+      <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
+        {onOpenInstall && (
+          <button
+            onClick={() => {
+              sounds.playClick();
+              onOpenInstall();
+            }}
+            className="px-2.5 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 border border-emerald-500/40 text-[11px] font-bold flex items-center gap-1 active:scale-95 transition-all cursor-pointer"
+            title="Install GymX App / Download APK on Phone"
+          >
+            <Smartphone className="w-3.5 h-3.5 shrink-0" />
+            <span>Install APK</span>
+          </button>
+        )}
+
         {/* Streak Pill */}
-        <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-zinc-900 border border-zinc-800">
+        <div className="hidden xs:flex sm:flex items-center gap-1 px-2 py-1 rounded-full bg-zinc-900 border border-zinc-800">
           <span className="text-xs leading-none">🔥</span>
           <span className="font-mono font-bold text-[11px] text-white">{currentStreak}d</span>
         </div>
@@ -62,7 +78,7 @@ export const Header: React.FC<HeaderProps> = ({
         {/* Staff Desk / Member Toggle */}
         <button
           onClick={handleRoleSwitch}
-          className={`px-2.5 py-1.5 rounded-xl text-xs font-bold border transition-all active:scale-95 cursor-pointer flex items-center gap-1.5 ${
+          className={`px-2 py-1.5 rounded-xl text-xs font-bold border transition-all active:scale-95 cursor-pointer flex items-center gap-1 ${
             userRole === 'owner'
               ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/40'
               : 'bg-zinc-900 text-zinc-300 border-zinc-800 hover:text-white'
