@@ -112,22 +112,26 @@ export const OneRepMaxModal: React.FC<OneRepMaxModalProps> = ({
           <div className="grid grid-cols-2 gap-3">
             {/* Weight Lifted */}
             <div className="p-3.5 rounded-2xl bg-zinc-900 border border-zinc-800 text-center space-y-2">
-              <span className="text-[10px] uppercase font-bold text-zinc-400 font-mono">
+              <span className="text-[10px] uppercase font-bold text-zinc-400 font-mono block">
                 Weight Lifted (kg)
               </span>
               <div className="flex items-center justify-center gap-2">
                 <button
+                  type="button"
                   onClick={() => handleStepWeight(-2.5)}
-                  className="w-8 h-8 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-bold text-zinc-300 flex items-center justify-center active:scale-95 cursor-pointer"
+                  className="relative z-10 shrink-0 w-8 h-8 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-bold text-zinc-300 flex items-center justify-center active:scale-95 cursor-pointer"
+                  aria-label="Decrease weight"
                 >
                   -
                 </button>
-                <span className="font-mono font-black text-xl text-white w-14 text-center">
+                <span className="font-mono font-black text-xl text-white min-w-[3rem] text-center pointer-events-none select-none">
                   {weightKg}
                 </span>
                 <button
+                  type="button"
                   onClick={() => handleStepWeight(2.5)}
-                  className="w-8 h-8 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-bold text-zinc-300 flex items-center justify-center active:scale-95 cursor-pointer"
+                  className="relative z-10 shrink-0 w-8 h-8 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-bold text-zinc-300 flex items-center justify-center active:scale-95 cursor-pointer"
+                  aria-label="Increase weight"
                 >
                   +
                 </button>
@@ -136,22 +140,26 @@ export const OneRepMaxModal: React.FC<OneRepMaxModalProps> = ({
 
             {/* Reps Completed */}
             <div className="p-3.5 rounded-2xl bg-zinc-900 border border-zinc-800 text-center space-y-2">
-              <span className="text-[10px] uppercase font-bold text-zinc-400 font-mono">
+              <span className="text-[10px] uppercase font-bold text-zinc-400 font-mono block">
                 Reps Performed
               </span>
               <div className="flex items-center justify-center gap-2">
                 <button
+                  type="button"
                   onClick={() => handleStepReps(-1)}
-                  className="w-8 h-8 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-bold text-zinc-300 flex items-center justify-center active:scale-95 cursor-pointer"
+                  className="relative z-10 shrink-0 w-8 h-8 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-bold text-zinc-300 flex items-center justify-center active:scale-95 cursor-pointer"
+                  aria-label="Decrease reps"
                 >
                   -
                 </button>
-                <span className="font-mono font-black text-xl text-white w-10 text-center">
+                <span className="font-mono font-black text-xl text-white min-w-[2.25rem] text-center pointer-events-none select-none">
                   {reps}
                 </span>
                 <button
+                  type="button"
                   onClick={() => handleStepReps(1)}
-                  className="w-8 h-8 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-bold text-zinc-300 flex items-center justify-center active:scale-95 cursor-pointer"
+                  className="relative z-10 shrink-0 w-8 h-8 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-bold text-zinc-300 flex items-center justify-center active:scale-95 cursor-pointer"
+                  aria-label="Increase reps"
                 >
                   +
                 </button>

@@ -119,6 +119,19 @@ export const ActiveWorkoutSessionModal: React.FC<ActiveWorkoutSessionModalProps>
     return () => clearInterval(interval);
   }, [isRestTimerActive]);
 
+  // Escape key closes Form Guide modal
+  useEffect(() => {
+    if (!showTechniqueModal) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        sounds.playClick();
+        setShowTechniqueModal(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showTechniqueModal]);
+
   const currentRoutineExercise = sessionExercises[currentExerciseIndex];
   const currentExercise = dynamicExercisesMap[currentRoutineExercise?.exerciseId];
   const currentSets = sessionSets[currentRoutineExercise?.exerciseId] || [];
@@ -812,23 +825,37 @@ export const ActiveWorkoutSessionModal: React.FC<ActiveWorkoutSessionModalProps>
 
       {/* FULL ANIMATED TECHNIQUE DEMONSTRATION POPUP */}
       {showTechniqueModal && currentExercise && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/90 animate-in fade-in">
-          <div className="w-full max-w-lg max-h-[90vh] flex flex-col rounded-3xl border border-zinc-800 bg-zinc-950 text-white shadow-2xl overflow-hidden">
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center p-3 sm:p-4 bg-black/90 backdrop-blur-sm animate-in fade-in"
+          onClick={() => {
+            sounds.playClick();
+            setShowTechniqueModal(false);
+          }}
+          role="dialog"
+          aria-modal="true"
+          aria-label={`${currentExercise.name} Form Guide`}
+        >
+          <div
+            className="w-full max-w-lg max-h-[90vh] flex flex-col rounded-3xl border border-zinc-800 bg-zinc-950 text-white shadow-2xl overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="px-4 py-3 border-b border-zinc-800 flex items-center justify-between bg-black">
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping shrink-0" />
                 <h3 className="font-display font-black text-sm text-white truncate">
                   {currentExercise.name} • Form Guide
                 </h3>
               </div>
               <button
+                type="button"
                 onClick={() => {
                   sounds.playClick();
                   setShowTechniqueModal(false);
                 }}
-                className="p-1 rounded-xl text-zinc-400 hover:text-white hover:bg-zinc-800 cursor-pointer transition-colors"
+                className="p-2 rounded-full hover:bg-zinc-800 text-zinc-400 hover:text-white transition cursor-pointer relative z-10 shrink-0"
+                aria-label="Close modal"
               >
-                <X className="w-5 h-5" />
+                <X className="w-5 h-5 text-zinc-400" />
               </button>
             </div>
             <div className="flex-1 overflow-y-auto p-4">

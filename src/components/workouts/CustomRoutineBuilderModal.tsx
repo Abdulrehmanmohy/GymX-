@@ -76,17 +76,19 @@ export const CustomRoutineBuilderModal: React.FC<CustomRoutineBuilderModalProps>
   return (
     <div
       id="custom-routine-builder-modal"
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 animate-in fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-sm animate-in fade-in"
+      onClick={onClose}
     >
       <div
-        className={`w-full max-w-lg max-h-[90vh] flex flex-col rounded-3xl border shadow-2xl overflow-hidden transition-all ${
+        onClick={(e) => e.stopPropagation()}
+        className={`relative w-full max-w-lg max-h-[90vh] flex flex-col rounded-3xl shadow-2xl overflow-hidden transition-all ${
           isDark
-            ? 'bg-zinc-950 border-zinc-800 text-zinc-100 shadow-zinc-950/90'
-            : 'bg-white border-zinc-200 text-zinc-900 shadow-xl'
+            ? 'bg-zinc-950/95 backdrop-blur-md border border-zinc-800 text-zinc-100 shadow-zinc-950/90'
+            : 'bg-white/95 backdrop-blur-md border border-zinc-200 text-zinc-900 shadow-xl'
         }`}
       >
         {/* Header */}
-        <div className="px-5 py-4 border-b border-zinc-800 flex items-center justify-between">
+        <div className="px-5 py-4 border-b border-zinc-800 flex items-center justify-between bg-zinc-950/95">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
               <Dumbbell className="w-4 h-4" />
@@ -97,8 +99,10 @@ export const CustomRoutineBuilderModal: React.FC<CustomRoutineBuilderModalProps>
             </div>
           </div>
           <button
+            type="button"
             onClick={onClose}
-            className="p-1.5 rounded-xl text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+            className="p-1.5 rounded-xl text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors cursor-pointer"
+            aria-label="Close modal"
           >
             <X className="w-4 h-4" />
           </button>

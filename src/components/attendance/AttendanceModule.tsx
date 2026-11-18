@@ -236,7 +236,7 @@ export const AttendanceModule: React.FC<AttendanceModuleProps> = ({
                   Gym Member Attendance Register
                 </h2>
                 <p className="text-xs text-zinc-400 mt-0.5">
-                  Search any member by name or APX-ID and record attendance with a single click.
+                  Search any member by name or GYMX-ID and record attendance with a single click.
                 </p>
               </div>
 
@@ -340,7 +340,7 @@ export const AttendanceModule: React.FC<AttendanceModuleProps> = ({
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search member by Name, APX-ID, or Tier..."
+                placeholder="Search member by Name, GYMX-ID, or Tier..."
                 className={`w-full pl-10 pr-4 py-2.5 rounded-2xl border text-xs font-medium transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
                   isDark
                     ? 'bg-[#121316] border-zinc-800 text-white placeholder-zinc-500'
@@ -580,7 +580,7 @@ export const AttendanceModule: React.FC<AttendanceModuleProps> = ({
               <strong className="text-white font-bold block mb-0.5">
                 Front Desk Attendance Instructions:
               </strong>
-              Search for any member by name or APX-ID and click{' '}
+              Search for any member by name or GYMX-ID and click{' '}
               <span className="text-emerald-400 font-bold">"Mark Present"</span>. Their check-in timestamp
               and streak will update immediately. To save or download the daily roster, click the{' '}
               <span className="text-white font-bold">"Export CSV"</span> button above.

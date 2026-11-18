@@ -34,17 +34,24 @@ export const PlateCalculatorModal: React.FC<PlateCalculatorModalProps> = ({
   onApplyWeight,
   onClose,
 }) => {
+  const barOptions = [
+    { id: 'olympic_20', label: "Olympic Bar (20 kg)", weight: 20 },
+    { id: 'tech_15', label: "Women's / Tech Bar (15 kg)", weight: 15 },
+    { id: 'ez_10', label: "EZ-Curl Bar (10 kg)", weight: 10 },
+    { id: 'smith_15', label: "Smith Machine Bar (15 kg)", weight: 15 },
+    { id: 'dumbbell_0', label: "Dumbbell Per Hand (0 kg)", weight: 0 },
+  ] as const;
+
   const isDark = theme === 'dark';
   const [targetWeight, setTargetWeight] = useState<number>(initialWeightKg || 80);
-  const [barWeight, setBarWeight] = useState<number>(20); // 20kg standard Olympic bar
+  const [selectedBar, setSelectedBar] = useState<string>('olympic_20');
+  const barWeight = barOptions.find((opt) => opt.id === selectedBar)?.weight ?? 20;
 
-  const barOptions = [
-    { label: "Olympic Bar (20 kg)", weight: 20 },
-    { label: "Women's / Tech Bar (15 kg)", weight: 15 },
-    { label: "EZ-Curl Bar (10 kg)", weight: 10 },
-    { label: "Smith Machine Bar (15 kg)", weight: 15 },
-    { label: "Dumbbell Per Hand (0 kg)", weight: 0 },
-  ];
+  const handleReset = () => {
+    sounds.playClick();
+    setTargetWeight(80);
+    setSelectedBar('olympic_20');
+  };
 
   // Calculate plates per side
   const calculation = useMemo(() => {
@@ -186,14 +193,15 @@ export const PlateCalculatorModal: React.FC<PlateCalculatorModalProps> = ({
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {barOptions.map((opt) => (
                 <button
-                  key={opt.label}
+                  key={opt.id}
+                  type="button"
                   onClick={() => {
                     sounds.playClick();
-                    setBarWeight(opt.weight);
+                    setSelectedBar(opt.id);
                     if (targetWeight < opt.weight) setTargetWeight(opt.weight);
                   }}
                   className={`p-2.5 rounded-xl text-left border transition-all cursor-pointer text-xs ${
-                    barWeight === opt.weight
+                    selectedBar === opt.id
                       ? 'bg-emerald-500/20 border-emerald-500 text-white font-bold ring-1 ring-emerald-500/50'
                       : 'bg-zinc-900/60 border-zinc-800 text-zinc-400 hover:text-zinc-200'
                   }`}
@@ -298,10 +306,8 @@ export const PlateCalculatorModal: React.FC<PlateCalculatorModalProps> = ({
         {/* Footer Actions */}
         <div className="p-4 border-t border-zinc-800 flex items-center gap-3 bg-zinc-950">
           <button
-            onClick={() => {
-              sounds.playClick();
-              setTargetWeight(initialWeightKg || 80);
-            }}
+            type="button"
+            onClick={handleReset}
             className="p-3 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white border border-zinc-800 transition-all cursor-pointer"
             title="Reset to default"
           >

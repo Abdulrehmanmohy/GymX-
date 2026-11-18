@@ -75,6 +75,18 @@ export const WorkoutsModule: React.FC<WorkoutsModuleProps> = ({
   const [showBuilder, setShowBuilder] = useState(false);
   const [inspectTab, setInspectTab] = useState<'video' | 'tempo'>('video');
 
+  useEffect(() => {
+    if (!inspectExercise) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        sounds.playClick();
+        setInspectExercise(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [inspectExercise]);
+
   // Problem solver modal states
   const [showPlateCalcModal, setShowPlateCalcModal] = useState(false);
   const [plateCalcInitialWeight, setPlateCalcInitialWeight] = useState(80);
@@ -652,21 +664,35 @@ export const WorkoutsModule: React.FC<WorkoutsModuleProps> = ({
 
       {/* EXERCISE DETAIL & 3-5s VIDEO DEMO MODAL */}
       {inspectExercise && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 animate-in fade-in">
-          <div className="w-full max-w-lg max-h-[92vh] flex flex-col rounded-3xl border border-zinc-800 bg-zinc-950 text-zinc-100 shadow-2xl overflow-hidden">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-sm animate-in fade-in"
+          onClick={() => {
+            sounds.playClick();
+            setInspectExercise(null);
+          }}
+          role="dialog"
+          aria-modal="true"
+          aria-label={`${inspectExercise.name} Form Guide`}
+        >
+          <div
+            className="w-full max-w-lg max-h-[92vh] flex flex-col rounded-3xl border border-zinc-800 bg-zinc-950 text-zinc-100 shadow-2xl overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="px-5 py-3.5 border-b border-zinc-800 flex items-center justify-between bg-black">
-              <div>
+              <div className="min-w-0">
                 <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1">
                   <Video className="w-3 h-3" /> 3-5 Second Form Video Demonstration
                 </span>
                 <h3 className="font-black text-base truncate font-display text-white">{inspectExercise.name}</h3>
               </div>
               <button
+                type="button"
                 onClick={() => {
                   sounds.playClick();
                   setInspectExercise(null);
                 }}
-                className="p-1.5 rounded-xl text-zinc-400 hover:text-white hover:bg-zinc-800 cursor-pointer transition-colors"
+                className="p-2 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 cursor-pointer transition relative z-10 shrink-0"
+                aria-label="Close modal"
               >
                 <X className="w-5 h-5" />
               </button>

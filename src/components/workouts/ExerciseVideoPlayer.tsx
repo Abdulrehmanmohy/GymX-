@@ -191,49 +191,49 @@ export const ExerciseVideoPlayer: React.FC<ExerciseVideoPlayerProps> = ({
           />
         )}
 
-        {/* Top Video HUD Info */}
-        <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
-          <div className="flex items-center gap-2">
-            <span className="px-2.5 py-1 rounded-full bg-black/90 text-xs font-extrabold text-emerald-400 border border-emerald-500/40 flex items-center gap-1.5 font-mono shadow-md">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-              Animated Movement Loop
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2 pointer-events-auto">
-            {exercise.videoUrl && !videoFailed && (
-              <button
-                onClick={() => {
-                  sounds.playClick();
-                  setDisplayMode(displayMode === 'animated' ? 'video' : 'animated');
-                }}
-                className="px-2.5 py-1 rounded-xl text-xs font-black border transition-all cursor-pointer bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border-zinc-700"
-              >
-                {displayMode === 'animated' ? 'Video View' : 'Animated Biomechanics'}
-              </button>
-            )}
-
-            <button
-              onClick={toggleSlowMo}
-              className={`px-2.5 py-1 rounded-xl text-xs font-black border transition-all cursor-pointer shadow-md flex items-center gap-1 ${
-                isSlowMotion
-                  ? 'bg-amber-400 text-black border-amber-300'
-                  : 'bg-black/90 hover:bg-black text-white border-zinc-700'
-              }`}
-              title="Slow Motion (0.5x speed) to see exact joint angles and form"
-            >
-              <Gauge className="w-3.5 h-3.5" />
-              <span>{isSlowMotion ? '0.5x Active' : '0.5x Slow-Mo'}</span>
-            </button>
-          </div>
-        </div>
-
         {/* Bottom Video Progress Scrub Line */}
         <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-zinc-900">
           <div
             className="h-full bg-emerald-500 transition-all duration-100"
             style={{ width: `${isPlaying ? (isSlowMotion ? 100 : 75) : 0}%` }}
           />
+        </div>
+      </div>
+
+      {/* Top Video HUD Controls (Responsive Flex Container) */}
+      <div className="px-4 flex flex-wrap items-center justify-between gap-2 mt-2">
+        <span className="px-2.5 py-1 rounded-full bg-zinc-900 text-xs font-extrabold text-emerald-400 border border-emerald-500/40 flex items-center gap-1.5 font-mono shadow-sm">
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+          Animated Movement Loop
+        </span>
+
+        <div className="flex flex-wrap items-center gap-2">
+          {exercise.videoUrl && !videoFailed && (
+            <button
+              type="button"
+              onClick={() => {
+                sounds.playClick();
+                setDisplayMode(displayMode === 'animated' ? 'video' : 'animated');
+              }}
+              className="px-2.5 py-1 rounded-xl text-xs font-black border transition-all cursor-pointer bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border-zinc-700"
+            >
+              {displayMode === 'animated' ? 'Video View' : 'Animated Biomechanics'}
+            </button>
+          )}
+
+          <button
+            type="button"
+            onClick={toggleSlowMo}
+            className={`px-2.5 py-1 rounded-xl text-xs font-black border transition-all cursor-pointer shadow-sm flex items-center gap-1 ${
+              isSlowMotion
+                ? 'bg-amber-400 text-black border-amber-300'
+                : 'bg-zinc-900 hover:bg-zinc-800 text-white border-zinc-700'
+            }`}
+            title="Slow Motion (0.5x speed) to see exact joint angles and form"
+          >
+            <Gauge className="w-3.5 h-3.5" />
+            <span>{isSlowMotion ? '0.5x Active' : '0.5x Slow-Mo'}</span>
+          </button>
         </div>
       </div>
 
